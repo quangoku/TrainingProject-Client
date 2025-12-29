@@ -51,7 +51,10 @@ export default function SideBar() {
           size={26}
         />
         <User
-          onClick={() => router.push(`/user/${user.id}`)}
+          onClick={() => {
+            if (user) router.push(`/user/${user.id}`);
+            else router.push("/login");
+          }}
           className="text-purple-400/50 hover:text-purple-50 cursor-pointer hover:scale-110 transition-transform"
           size={26}
         />
