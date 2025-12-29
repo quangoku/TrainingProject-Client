@@ -1,9 +1,22 @@
-import Post from "@/components/Post";
+import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserById } from "@/lib/actions/user";
 import { Link as LinkIcon } from "lucide-react";
 
+type Props = {
+  params: { id: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const user = await getUserById(parseInt(id));
+
+  return {
+    title: `${user.username} (@${user.username})`,
+    description: user.bio || `Trang cá nhân của ${user.username} trên Threads`,
+  };
+}
 export default async function ProfilePage({
   params,
 }: {
