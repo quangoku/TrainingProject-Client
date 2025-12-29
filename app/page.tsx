@@ -1,15 +1,14 @@
 import Post from "@/components/Post";
 import { Button } from "@/components/ui/button";
+import { cookies } from "next/headers";
 import Image from "next/image";
 
 export default async function ThreadsPage() {
-  const res = await fetch("http://localhost:3000/posts", {
+  const response = await fetch("http://localhost:3000/posts", {
     credentials: "include",
   });
-  const result = await res.json();
+  const result = await response.json();
   const posts = result.data;
-  console.log(posts);
-
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20 md:pb-0">
       {/* HEADER (Logo) */}

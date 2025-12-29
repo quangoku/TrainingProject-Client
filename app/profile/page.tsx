@@ -1,8 +1,7 @@
 import Post from "@/components/Post";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from "next/image";
-import { Instagram, Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon } from "lucide-react";
 
 export default function ProfilePage() {
   const userPosts = [
@@ -37,7 +36,6 @@ export default function ProfilePage() {
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=Daisy"
               alt="Avatar"
-              fill
               className="rounded-full bg-purple-800 object-cover"
             />
           </div>

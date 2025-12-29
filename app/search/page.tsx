@@ -55,7 +55,6 @@ export default function SearchPage() {
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  fill
                   className="rounded-full bg-purple-800"
                 />
               </div>

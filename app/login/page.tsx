@@ -9,6 +9,24 @@ export default function LoginPage() {
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const router = useRouter();
+  const handleLogin = async () => {
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+    const result = await response.json();
+    console.log(result);
+    if (response.ok) {
+      router.push("/");
+    } else {
+      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center justify-center px-4">
       {/* BACKGROUND DECORATION (Optional) */}
@@ -47,26 +65,7 @@ export default function LoginPage() {
           />
           <p className="text-red-500 text-sm">{error}</p>
           <Button
-            onClick={async () => {
-              const response = await fetch("http://localhost:3000/auth/login", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-                credentials: "include",
-              });
-
-              const user = await response.json();
-              console.log(user);
-              if (response.ok) {
-                router.push("/");
-              } else {
-                setError(
-                  "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin."
-                );
-              }
-            }}
+            onClick={handleLogin}
             className="cursor-pointer w-full h-14 bg-white text-black hover:bg-gray-200 font-bold rounded-xl text-base mt-2 transition-all"
           >
             Đăng nhập
@@ -92,7 +91,7 @@ export default function LoginPage() {
         <a href="http://localhost:3000/auth/mezon" className="w-full">
           <Button
             variant="outline"
-            className="w-full h-14 border-purple-900/30 bg-transparent cursor-pointer rounded-xl flex items-center justify-center gap-3 font-semibold"
+            className="w-full h-14 border-purple-900/30 bg-purple-700 cursor-pointer rounded-xl gap-3 "
           >
             <img src="/icon.png" alt="" className="rounded-3xl size-5" />
             Tiếp tục với Mezon

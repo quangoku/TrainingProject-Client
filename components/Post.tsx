@@ -12,7 +12,11 @@ export default function Post({ post }: { post: any }) {
       <div className="flex flex-col items-center">
         <Avatar>
           <AvatarImage
-            src={post.avatar}
+            src={
+              post.author?.image
+                ? post.author.image
+                : "https://img.icons8.com/nolan/1200/user-default.jpg"
+            }
             className="bg-purple-900"
           ></AvatarImage>
           <AvatarFallback>CN</AvatarFallback>
@@ -25,7 +29,7 @@ export default function Post({ post }: { post: any }) {
       <div className="flex flex-col gap-1 w-full">
         <div className="flex gap-5 items-center">
           <h4 className="font-bold text-sm hover:underline cursor-pointer">
-            {post.user}
+            {post.author?.username}
           </h4>
           <span className="text-purple-400/50 text-xs">{post.time}</span>
         </div>
@@ -50,10 +54,12 @@ export default function Post({ post }: { post: any }) {
             size={20}
             className="hover:text-pink-500 cursor-pointer transition"
           />
+          {post.likes_count}
           <MessageCircle
             size={20}
             className="hover:text-purple-400 cursor-pointer transition"
           />
+          {post.replies_count}
           <Repeat2
             size={20}
             className="hover:text-green-400 cursor-pointer transition"
