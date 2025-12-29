@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@/Context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { Heart, Home, Plus, Search, User, Menu, LogOut, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
