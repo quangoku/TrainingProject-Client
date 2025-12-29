@@ -69,16 +69,6 @@ export default function Post({ post }: { post: any }) {
             className="hover:text-blue-400 cursor-pointer transition"
           />
         </div>
-
-        <div className="mt-2 flex items-center gap-2">
-          <span className="text-xs text-purple-400/50">
-            {post.replies} trả lời
-          </span>
-          <span className="text-purple-400/50">·</span>
-          <span className="text-xs text-purple-400/50">
-            {post.likes} lượt thích
-          </span>
-        </div>
       </div>
     </article>
   );

@@ -1,10 +1,12 @@
 "use client";
+import { useAuth } from "@/Context/AuthContext";
 import { Heart, Home, Plus, Search, User, Menu, LogOut, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SideBar() {
   const router = useRouter();
+  const { user, setUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -15,6 +17,7 @@ export default function SideBar() {
     });
     if (res.ok) {
       router.push("/login");
+      setUser(null);
     } else {
       console.log("Logout failed");
     }
@@ -48,7 +51,7 @@ export default function SideBar() {
           size={26}
         />
         <User
-          onClick={() => router.push("/profile")}
+          onClick={() => router.push(`/user/${user.id}`)}
           className="text-purple-400/50 hover:text-purple-50 cursor-pointer hover:scale-110 transition-transform"
           size={26}
         />

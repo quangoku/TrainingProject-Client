@@ -1,14 +1,10 @@
 import Post from "@/components/Post";
-import { Button } from "@/components/ui/button";
-import { cookies } from "next/headers";
+import Upload from "@/components/Upload";
+import { getPost } from "@/lib/actions/post";
 import Image from "next/image";
 
 export default async function ThreadsPage() {
-  const response = await fetch("http://localhost:3000/posts", {
-    credentials: "include",
-  });
-  const result = await response.json();
-  const posts = result.data;
+  const posts = await getPost();
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20 md:pb-0">
       {/* HEADER (Logo) */}
@@ -25,18 +21,10 @@ export default async function ThreadsPage() {
       </header>
 
       {/* MAIN CONTENT AREA */}
+
       <main className="w-full max-w-[600px] px-4 border rounded-2xl border-purple-900/30 mt-4 bg-[#0a0510]/50 backdrop-blur-sm">
         {/* CREATE POST INPUT (Chỉ hiển thị desktop/tablet giả lập) */}
-        <div className="hidden md:flex items-center gap-3 py-4 border-b border-purple-900/30">
-          <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0"></div>
-          <div className="flex-1">
-            <p className="text-purple-400/50 text-sm">Có gì mới?</p>
-          </div>
-          <Button className="ml-auto px-4 py-1.5 bg-purple-600  text-sm font-semibold hover:bg-purple-500 transition cursor-pointer">
-            Đăng
-          </Button>
-        </div>
-
+        <Upload />
         {/* FEED */}
         <div className="flex flex-col">
           {posts.map((post) => (

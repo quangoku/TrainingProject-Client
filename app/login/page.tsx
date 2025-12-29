@@ -1,32 +1,7 @@
-"use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
+import LoginForm from "./_components/LoginForm";
 export default function LoginPage() {
-  const [data, setData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const router = useRouter();
-  const handleLogin = async () => {
-    const response = await fetch("http://localhost:3000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      credentials: "include",
-    });
-    const result = await response.json();
-    console.log(result);
-    if (response.ok) {
-      router.push("/");
-    } else {
-      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center justify-center px-4">
       {/* BACKGROUND DECORATION (Optional) */}
@@ -44,34 +19,7 @@ export default function LoginPage() {
         </h1>
 
         {/* FORM */}
-        <div className="w-full space-y-3">
-          <Input
-            name="email"
-            type="text"
-            value={data.email}
-            onChange={(e) => setData({ ...data, email: e.target.value })}
-            placeholder="Tên người dùng, email hoặc số di động"
-            className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
-          />
-          <Input
-            name="pasword"
-            value={data.password}
-            onChange={(e) => {
-              setData({ ...data, password: e.target.value });
-            }}
-            type="password"
-            placeholder="Mật khẩu"
-            className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
-          />
-          <p className="text-red-500 text-sm">{error}</p>
-          <Button
-            onClick={handleLogin}
-            className="cursor-pointer w-full h-14 bg-white text-black hover:bg-gray-200 font-bold rounded-xl text-base mt-2 transition-all"
-          >
-            Đăng nhập
-          </Button>
-        </div>
-
+        <LoginForm></LoginForm>
         {/* FORGOT PASSWORD */}
         <Link
           href="#"

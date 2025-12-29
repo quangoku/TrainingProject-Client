@@ -1,30 +1,23 @@
 import Post from "@/components/Post";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getUserById } from "@/lib/actions/user";
 import { Link as LinkIcon } from "lucide-react";
 
-export default function ProfilePage() {
-  const userPosts = [
-    {
-      id: 1,
-      user: "daisy_design",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Daisy",
-      content: "Đây là bài viết của chính tôi trên trang cá nhân!",
-      image:
-        "https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/04/hinh-nen-roblox-thumbnail.jpg",
-      likes: 450,
-      replies: 24,
-      time: "1d",
-    },
-  ];
-
+export default async function ProfilePage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = await params;
+  const user = await getUserById(parseInt(id));
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20">
       <main className="w-full max-w-[600px] px-4 pt-8">
         {/* PROFILE HEADER */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold">Daisy Design</h2>
+            <h2 className="text-2xl font-bold">{user.username}</h2>
             <div className="flex items-center gap-2">
               <span className="text-sm">daisy_design</span>
               <span className="bg-purple-900/40 text-purple-400 text-[10px] px-2 py-0.5 rounded-full">
@@ -34,7 +27,7 @@ export default function ProfilePage() {
           </div>
           <div className="relative w-20 h-20">
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Daisy"
+              src={user.image}
               alt="Avatar"
               className="rounded-full bg-purple-800 object-cover"
             />
@@ -43,10 +36,7 @@ export default function ProfilePage() {
 
         {/* BIO & LINKS */}
         <div className="mb-6 space-y-3">
-          <p className="text-sm text-purple-100">
-            UI/UX Designer & Roblox Enthusiast. 🎨 <br />
-            Xây dựng những thứ thú vị với Next.js và Tailwind.
-          </p>
+          <p className="text-sm text-purple-100">{user.bio}</p>
           <div className="flex items-center gap-4 text-sm text-purple-400/60">
             <div className="flex items-center gap-1 hover:underline cursor-pointer">
               <span className="text-purple-100 font-medium">1.2K</span> người
@@ -97,9 +87,9 @@ export default function ProfilePage() {
 
           <TabsContent value="threads" className="mt-2">
             <div className="flex flex-col">
-              {userPosts.map((post) => (
+              {/* {userPosts.map((post) => (
                 <Post post={post} key={post.id} />
-              ))}
+              ))} */}
             </div>
           </TabsContent>
 
