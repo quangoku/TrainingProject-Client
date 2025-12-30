@@ -10,12 +10,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"; // Import Dialog từ shadcn
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { useRouter } from "next/navigation";
 
 export default function Upload() {
   const { user } = useAuth();
   const [content, setContent] = useState(""); // Lưu nội dung bài đăng
   const [open, setOpen] = useState(false); // Kiểm soát đóng/mở modal
-
   if (!user) return null;
   const handlePost = async () => {
     const response = await fetch("http://localhost:3000/posts", {

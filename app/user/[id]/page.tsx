@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${user.username} (@${user.username})`,
-    description: user.bio || `Trang cá nhân của ${user.username} trên Threads`,
+    description: user.bio || `Trang cá nhân của ${user.username} trên methread`,
   };
 }
 export default async function ProfilePage({

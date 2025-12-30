@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const result = await getCurrentUser();
         console.log(result);
-        setUser(result.data);
+        setUser(result);
       } catch (err) {
         setUser(null);
       } finally {

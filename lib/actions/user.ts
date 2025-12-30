@@ -11,5 +11,5 @@ export const getCurrentUser = async () => {
     credentials: "include",
   });
   const result = await response.json();
-  return result;
+  return result.data;
 };

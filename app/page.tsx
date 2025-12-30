@@ -1,10 +1,8 @@
-import Post from "@/components/Post";
+import PostList from "@/components/PostList";
 import Upload from "@/components/Upload";
-import { getPost } from "@/lib/actions/post";
 import Image from "next/image";
 
 export default async function ThreadsPage() {
-  const posts = await getPost();
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20 md:pb-0">
       {/* HEADER (Logo) */}
@@ -26,11 +24,7 @@ export default async function ThreadsPage() {
         {/* CREATE POST INPUT (Chỉ hiển thị desktop/tablet giả lập) */}
         <Upload />
         {/* FEED */}
-        <div className="flex flex-col">
-          {posts.map((post) => (
-            <Post post={post} key={post.id}></Post>
-          ))}
-        </div>
+        <PostList></PostList>
       </main>
 
       {/* NAVIGATION BAR (Mobile bottom, Desktop Sidebar) */}
