@@ -11,7 +11,7 @@ export default function SideBar() {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleLogout = async () => {
-    const res = await fetch("http://localhost:3000/auth/logout", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });

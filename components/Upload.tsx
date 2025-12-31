@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"; // Import Dialog từ shadcn
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { useRouter } from "next/navigation";
 
 export default function Upload() {
   const { user } = useAuth();
@@ -18,7 +17,7 @@ export default function Upload() {
   const [open, setOpen] = useState(false); // Kiểm soát đóng/mở modal
   if (!user) return null;
   const handlePost = async () => {
-    const response = await fetch("http://localhost:3000/posts", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
       method: "POST",
       credentials: "include",
       headers: {

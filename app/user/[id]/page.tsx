@@ -35,7 +35,11 @@ export default async function ProfilePage({
           </div>
           <div className="relative w-20 h-20">
             <img
-              src={user.image}
+              src={
+                user.image
+                  ? user.image
+                  : "https://img.icons8.com/nolan/1200/user-default.jpg"
+              }
               alt="Avatar"
               className="rounded-full bg-purple-800 object-cover"
             />
