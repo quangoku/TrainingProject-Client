@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Post from "./Post";
-import { getPost } from "@/lib/actions/post";
 import { Loader } from "lucide-react";
+import { getPosts } from "@/lib/actions/post";
 interface User {
   image: string;
   username: string;
@@ -16,10 +16,16 @@ interface Post {
   likes_count: number;
   replies_count: number;
 }
+interface InitData {
+  posts: Post[];
+  nextCursor: string | null;
+}
 
-export default function PostList() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
+export default function PostList({ initData }: { initData: InitData }) {
+  const [posts, setPosts] = useState<Post[]>(initData.posts);
+  const [nextCursor, setNextCursor] = useState<string | null>(
+    initData.nextCursor
+  );
   const [loading, setLoading] = useState(false);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -29,7 +35,7 @@ export default function PostList() {
 
     setLoading(true);
     try {
-      const res = await getPost(cursor || "");
+      const res = await getPosts(cursor || "");
 
       setPosts((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
@@ -44,10 +50,6 @@ export default function PostList() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   useEffect(() => {
     if (!loadMoreRef.current || !nextCursor) return;

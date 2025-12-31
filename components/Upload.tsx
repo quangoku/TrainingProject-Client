@@ -27,7 +27,6 @@ export default function Upload() {
       body: JSON.stringify({ content }),
     });
     const result = await response.json();
-    console.log(result);
     setContent("");
     setOpen(false);
   };
@@ -36,7 +35,11 @@ export default function Upload() {
     <div className="hidden md:flex items-center gap-3 py-4 border-b border-purple-900/30">
       <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0 overflow-hidden">
         <img
-          src={user.image}
+          src={
+            user.image
+              ? user.image
+              : "https://img.icons8.com/nolan/1200/user-default.jpg"
+          }
           alt="avatar"
           className="w-full h-full object-cover"
         />

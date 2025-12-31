@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import LoginForm from "./_components/LoginForm";
+import LoginForm from "./_components/RegisterForm";
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center justify-center px-4">
@@ -29,7 +29,10 @@ export default function LoginPage() {
         </div>
 
         {/* SOCIAL LOGIN */}
-        <a href="http://localhost:3000/auth/mezon" className="w-full">
+        <a
+          href={`${process.env.NEXT_PUBLIC_API_URL}/}auth/mezon`}
+          className="w-full"
+        >
           <Button
             variant="outline"
             className="w-full h-14 border-purple-900/30 bg-purple-700 cursor-pointer rounded-xl gap-3 "
@@ -38,15 +41,6 @@ export default function LoginPage() {
             Tiếp tục với Mezon
           </Button>
         </a>
-        <div className="mt-6 text-sm text-purple-400">
-          Chưa có tài khoản?{" "}
-          <Link
-            href="/register"
-            className="text-white font-semibold hover:underline"
-          >
-            Đăng ký ngay
-          </Link>
-        </div>
         {/* FOOTER */}
         <footer className="mt-20 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-purple-400/40">
           <span>© 2024 Threads Clone</span>

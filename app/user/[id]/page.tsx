@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserById } from "@/lib/actions/user";
 import { Link as LinkIcon } from "lucide-react";
+import Setting from "./_components/Setting";
 
 type Props = {
   params: { id: string };
@@ -31,12 +31,7 @@ export default async function ProfilePage({
         <div className="flex justify-between items-start mb-6">
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-bold">{user.username}</h2>
-            <div className="flex items-center gap-2">
-              <span className="text-sm">daisy_design</span>
-              <span className="bg-purple-900/40 text-purple-400 text-[10px] px-2 py-0.5 rounded-full">
-                threads.net
-              </span>
-            </div>
+            <div className="flex items-center gap-2"></div>
           </div>
           <div className="relative w-20 h-20">
             <img
@@ -52,8 +47,16 @@ export default async function ProfilePage({
           <p className="text-sm text-purple-100">{user.bio}</p>
           <div className="flex items-center gap-4 text-sm text-purple-400/60">
             <div className="flex items-center gap-1 hover:underline cursor-pointer">
-              <span className="text-purple-100 font-medium">1.2K</span> người
-              theo dõi
+              <span className="text-purple-100 font-medium">
+                {user.followers_count}
+              </span>{" "}
+              người theo dõi
+            </div>
+            <div className="flex items-center gap-1 hover:underline cursor-pointer">
+              <span className="text-purple-100 font-medium">
+                {user.following_count}
+              </span>{" "}
+              đang theo dõi
             </div>
             <div className="flex items-center gap-1 hover:underline cursor-pointer">
               <LinkIcon className="w-3 h-3" />
@@ -63,18 +66,7 @@ export default async function ProfilePage({
         </div>
 
         {/* ACTIONS */}
-        <div className="flex gap-3 mb-8">
-          <Button className="flex-1 bg-white text-black hover:bg-gray-200 font-bold rounded-xl transition-all">
-            Chỉnh sửa trang cá nhân
-          </Button>
-          <Button
-            variant="outline"
-            className="flex-1 border-purple-900/30 bg-transparent hover:bg-purple-900/10 rounded-xl font-bold"
-          >
-            Chia sẻ trang cá nhân
-          </Button>
-        </div>
-
+        <Setting profileUser={user}></Setting>
         {/* TABS (THREADS, REPLIES, REPOSTS) */}
         <Tabs defaultValue="threads" className="w-full">
           <TabsList className="w-full bg-transparent  rounded-none p-0 h-12">
