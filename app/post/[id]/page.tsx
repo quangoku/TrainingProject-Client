@@ -1,6 +1,6 @@
 import { getPostById, getRepliesByPostId } from "@/lib/actions/post";
 import Image from "next/image";
-import MainPost from "./_components/MainPost";
+import MainPost from "./_components/ParentPost";
 import Post from "@/components/Post";
 import NoReply from "./_components/NoReply";
 
