@@ -62,11 +62,14 @@ export default function MainPost({ post }: { post: Post }) {
 
       {/* Cột phải: Nội dung */}
 
-      <div className="flex flex-col gap-1 w-full" href={`/post/${post.id}`}>
+      <div
+        className="flex flex-col gap-1 w-full min-w-0"
+        href={`/post/${post.id}`}
+      >
         <div className="flex gap-5 items-center">
           <span className="text-purple-400/50 text-xs">{post.time}</span>
         </div>
-        <p className="text-[15px] leading-relaxed text-purple-100">
+        <p className="text-[15px] leading-relaxed text-purple-100  wrap-break-word whitespace-pre-wrap">
           {post.content}
         </p>
         {/* Tương tác */}

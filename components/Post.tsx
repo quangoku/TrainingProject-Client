@@ -79,14 +79,17 @@ export default function Post({ post }: { post: Post }) {
       </div>
 
       {/* Cột phải: Nội dung */}
-      <Link className="flex flex-col gap-1 w-full" href={`/post/${post.id}`}>
+      <Link
+        className="flex flex-col gap-1 w-full min-w-0"
+        href={`/post/${post.id}`}
+      >
         <div className="flex gap-5 items-center">
           <h4 className="font-bold text-sm hover:underline cursor-pointer">
             {post.author?.username}
           </h4>
           {/* <span className="text-purple-400/50 text-xs">Time</span> */}
         </div>
-        <p className="text-[15px] leading-relaxed text-purple-100">
+        <p className="text-[15px] leading-relaxed text-purple-100  wrap-break-word whitespace-pre-wrap">
           {post.content}
         </p>
 
