@@ -19,7 +19,7 @@ export default async function PostDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20 md:pb-0">
+    <div className="min-h-screen bg-[#0a0510] text-purple-50   flex flex-col items-center pb-20 md:pb-0">
       <header className="w-full max-w-[700px] h-16 flex items-center justify-center sticky top-0 bg-[#0a0510]/80 backdrop-blur-md z-50">
         <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center rotate-3">
           <Image
