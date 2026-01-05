@@ -1,8 +1,9 @@
 import { getPostById, getRepliesByPostId } from "@/lib/actions/post";
 import Image from "next/image";
-import MainPost from "./_components/ParentPost";
+import ParentPost from "./_components/ParentPost";
 import Post from "@/components/Post";
 import NoReply from "./_components/NoReply";
+import NotFound from "./_components/NotFound";
 
 export default async function PostDetailPage({
   params,
@@ -13,8 +14,9 @@ export default async function PostDetailPage({
   const post = await getPostById(parseInt(id));
   const replies = await getRepliesByPostId(parseInt(id));
   console.log(replies);
-  if (!post)
-    return <div className="text-center py-20">Không tìm thấy bài viết</div>;
+  if (!post) {
+    return <NotFound></NotFound>;
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20 md:pb-0">
@@ -31,7 +33,7 @@ export default async function PostDetailPage({
       </header>
 
       <main className="w-full max-w-[700px] px-4 border rounded-2xl border-purple-900/30 mt-4 bg-[#0a0510]/50 backdrop-blur-sm">
-        <MainPost post={post}></MainPost>
+        <ParentPost post={post}></ParentPost>
         {replies.length > 0 ? (
           replies.map((reply) => {
             return <Post key={reply.id} post={reply}></Post>;

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react"; // Thêm useState
+import { useState, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "./ui/button";
 import {
@@ -8,60 +8,110 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"; // Import Dialog từ shadcn
-import { DialogDescription } from "@radix-ui/react-dialog";
+} from "@/components/ui/dialog";
+import { ImagePlus, X } from "lucide-react";
 
 export default function Upload() {
   const { user } = useAuth();
-  const [content, setContent] = useState(""); // Lưu nội dung bài đăng
-  const [open, setOpen] = useState(false); // Kiểm soát đóng/mở modal
+  const [content, setContent] = useState("");
+  const [open, setOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   if (!user) return null;
-  const handlePost = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content }),
-    });
-    const result = await response.json();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setSelectedImages((prev) => [...prev, ...files]);
+      const newPreviews = files.map((file) => URL.createObjectURL(file));
+      setPreviewUrls((prev) => [...prev, ...newPreviews]);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    URL.revokeObjectURL(previewUrls[index]);
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const clearAll = () => {
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    setSelectedImages([]);
+    setPreviewUrls([]);
     setContent("");
-    setOpen(false);
+  };
+
+  const handlePost = async () => {
+    const formData = new FormData();
+    formData.append("content", content);
+    selectedImages.forEach((file) => {
+      formData.append("files", file);
+    });
+    setUploading(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      if (response.ok) {
+        clearAll();
+        setOpen(false);
+      }
+    } catch (error) {
+      console.error("Lỗi đăng bài:", error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
-    <div className="hidden md:flex items-center gap-3 py-4 border-b border-purple-900/30">
+    <div className="hidden md:flex items-center gap-3 py-4 border-b border-purple-900/30 w-full">
+      {/* Avatar người dùng */}
       <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0 overflow-hidden">
         <img
           src={
-            user.image
-              ? user.image
-              : "https://img.icons8.com/nolan/1200/user-default.jpg"
+            user.image || "https://img.icons8.com/nolan/1200/user-default.jpg"
           }
           alt="avatar"
           className="w-full h-full object-cover"
         />
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        {/* Trigger là phần thanh input giả */}
+      {/* Modal Dialog */}
+      <Dialog
+        open={open}
+        onOpenChange={(val) => {
+          setOpen(val);
+          if (!val) clearAll();
+        }}
+      >
         <DialogTrigger asChild>
           <div className="flex-1 cursor-pointer">
             <p className="text-purple-400/50 text-sm">Có gì mới?</p>
           </div>
         </DialogTrigger>
-        <DialogDescription></DialogDescription>
-        <DialogContent className="sm:max-w-[500px] bg-[#120a1c] border-purple-900/50 text-purple-50">
+
+        <DialogContent className="sm:max-w-[550px] bg-[#120a1c] border-purple-900/50 text-purple-50 max-h-[90vh] overflow-y-auto outline-none">
           <DialogHeader>
             <DialogTitle className="text-center border-b border-purple-900/30 pb-4">
-              Nội dung
+              Nội dung bài đăng
             </DialogTitle>
           </DialogHeader>
 
           <div className="flex gap-3 pt-4">
-            <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0">
-              <img src={user.image} alt="" className="rounded-full" />
+            <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0 overflow-hidden">
+              <img
+                src={user.image}
+                alt=""
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex-1 flex flex-col gap-1">
               <p className="text-sm font-semibold">{user.username}</p>
@@ -69,27 +119,74 @@ export default function Upload() {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Có gì mới?"
-                className="w-full bg-transparent border-none focus:ring-0 text-sm resize-none min-h-[120px] outline-none placeholder:text-purple-400/30"
+                className="w-full bg-transparent border-none focus:ring-0 text-sm resize-none min-h-[80px] outline-none placeholder:text-purple-400/30"
                 autoFocus
               />
+
+              {/* Preview ảnh dạng Grid */}
+              {previewUrls.length > 0 && (
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {previewUrls.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative group rounded-lg overflow-hidden border border-purple-900/50 aspect-square bg-black/20"
+                    >
+                      <button
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 p-1 bg-black/60 rounded-full hover:bg-red-500 transition z-10"
+                      >
+                        <X size={14} />
+                      </button>
+                      <img
+                        src={url}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Icon chọn nhiều ảnh */}
+              <div className="mt-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-purple-400 hover:text-purple-300 transition flex items-center gap-2 w-fit"
+                >
+                  <ImagePlus size={20} />
+                  <span className="text-xs font-medium">Thêm ảnh</span>
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="flex justify-end pt-4">
             <Button
               onClick={handlePost}
-              disabled={!content.trim()}
+              disabled={
+                (!content.trim() && selectedImages.length === 0) || uploading
+              }
               className="bg-purple-600 hover:bg-purple-500 text-white rounded-xl px-6"
             >
-              Đăng
+              {uploading ? "Đang đăng..." : "Đăng"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
+      {/* NÚT ĐĂNG (Bên ngoài thanh input) */}
       <Button
         onClick={() => setOpen(true)}
-        className="ml-auto px-4 py-1.5 bg-purple-600 text-sm font-semibold hover:bg-purple-500 transition cursor-pointer rounded-xl"
+        className="cursor-pointer ml-auto px-4 py-1.5 bg-purple-600 text-sm font-semibold hover:bg-purple-500 transition cursor-pointer rounded-xl"
       >
         Đăng
       </Button>

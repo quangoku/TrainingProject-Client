@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserById } from "@/lib/actions/user";
-import { Link as LinkIcon } from "lucide-react";
 import Setting from "./_components/Setting";
+import FollowListModal from "./_components/Follow";
 
 type Props = {
   params: { id: string };
@@ -49,23 +49,22 @@ export default async function ProfilePage({
         {/* BIO & LINKS */}
         <div className="mb-6 space-y-3">
           <p className="text-sm text-purple-100">{user.bio}</p>
-          <div className="flex items-center gap-4 text-sm text-purple-400/60">
-            <div className="flex items-center gap-1 hover:underline cursor-pointer">
-              <span className="text-purple-100 font-medium">
-                {user.followers_count}
-              </span>{" "}
-              người theo dõi
-            </div>
-            <div className="flex items-center gap-1 hover:underline cursor-pointer">
-              <span className="text-purple-100 font-medium">
-                {user.following_count}
-              </span>{" "}
-              đang theo dõi
-            </div>
-            <div className="flex items-center gap-1 hover:underline cursor-pointer">
-              <LinkIcon className="w-3 h-3" />
-              <span>daisydesign.com</span>
-            </div>
+          <div className="flex items-center gap-4 text-sm">
+            {/* Nút Người theo dõi */}
+            <FollowListModal
+              userId={user.id}
+              type="followers"
+              count={user.followers_count}
+              triggerText="người theo dõi"
+            />
+
+            {/* Nút Đang theo dõi */}
+            <FollowListModal
+              userId={user.id}
+              type="following"
+              count={user.following_count}
+              triggerText="đang theo dõi"
+            />
           </div>
         </div>
 

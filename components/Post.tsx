@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
+  Bookmark,
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { getLikeStatus, toggleLike } from "@/lib/actions/post";
@@ -34,79 +35,108 @@ interface PostProps {
   author: User;
   likes_count: number;
   replies_count: number;
+  media: { id: number; url: string; type: string }[];
 }
 
 export default function Post({ post }: { post: PostProps }) {
+  const { user } = useAuth();
+
   const [isLike, setIsLike] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [repliesCount, setRepliesCount] = useState(post.replies_count);
+
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
-  const { user } = useAuth();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(post.content);
 
   const isAuthor = user?.id === post.author?.id;
 
-  // Xử lý Like
+  /* ================= LIKE ================= */
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!user) return (window.location.href = "/login");
 
-    const newLikeStatus = !isLike;
-    setIsLike(newLikeStatus);
-    setLikesCount((prev) => (newLikeStatus ? prev + 1 : prev - 1));
+    const next = !isLike;
+    setIsLike(next);
+    setLikesCount((prev) => (next ? prev + 1 : prev - 1));
     await toggleLike(post.id);
   };
 
-  // Xử lý Xóa bài (Sử dụng cấu hình CASCADE từ NestJS của bạn)
+  /* ================= DELETE ================= */
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (
-      !confirm(
-        "Bạn có chắc chắn muốn xóa bài viết này và tất cả phản hồi của nó?"
-      )
-    )
-      return;
+    if (!confirm("Bạn có chắc chắn muốn xóa bài viết này?")) return;
 
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/posts/${post.id}`,
         {
           method: "DELETE",
           credentials: "include",
         }
       );
-      if (response.ok) {
-        // Có thể thay bằng logic state để xóa bài khỏi danh sách mà không reload
+
+      if (res.ok) {
         window.location.reload();
       }
-    } catch (error) {
-      console.error("Lỗi khi xóa bài:", error);
+    } catch (err) {
+      console.error("Lỗi xóa bài:", err);
     }
   };
 
-  // Xử lý Trả lời
+  /* ================= EDIT ================= */
+  const handleEdit = async () => {
+    if (!editContent.trim()) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${post.id}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: editContent }),
+        }
+      );
+
+      if (res.ok) {
+        post.content = editContent; // update tạm UI
+        setIsEditing(false);
+      }
+    } catch (err) {
+      console.error("Lỗi chỉnh sửa:", err);
+    }
+  };
+
+  /* ================= REPLY ================= */
   const handleReply = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!replyContent.trim()) return;
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: replyContent, parent_id: post.id }),
+      body: JSON.stringify({
+        content: replyContent,
+        parent_id: post.id,
+      }),
     });
 
-    if (response.ok) {
+    if (res.ok) {
       setRepliesCount((prev) => prev + 1);
       setReplyContent("");
       setIsReplying(false);
     }
   };
 
+  /* ================= LIKE STATUS ================= */
   useEffect(() => {
     async function fetchLikeStatus() {
       const res = await getLikeStatus(post.id);
@@ -116,124 +146,183 @@ export default function Post({ post }: { post: PostProps }) {
   }, [post.id]);
 
   return (
-    <article className="py-4 border-b border-purple-900/20 flex gap-3 relative hover:bg-white/[0.02] transition-colors px-4">
-      {/* Cột trái: Avatar và đường kẻ nối */}
+    <article className="py-4 border-b border-purple-900/20 flex gap-3 hover:bg-white/[0.02] px-4 transition">
+      {/* LEFT */}
       <div className="flex flex-col items-center">
-        <Link
-          href={`/user/${post.author?.id}`}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <Link href={`/user/${post.author.id}`}>
           <Avatar className="w-10 h-10 border border-purple-900/50">
             <AvatarImage
               src={
-                post.author?.image ||
+                post.author.image ||
                 "https://img.icons8.com/nolan/1200/user-default.jpg"
               }
-              className="object-cover"
             />
-            <AvatarFallback>{post.author?.username?.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{post.author.username.charAt(0)}</AvatarFallback>
           </Avatar>
         </Link>
-        <div className="w-[2px] grow bg-purple-900/20 my-2 rounded-full"></div>
+        <div className="w-[2px] grow bg-purple-900/20 my-2 rounded-full" />
       </div>
 
-      {/* Cột phải: Nội dung chính */}
-      <div className="flex flex-col gap-1 w-full min-w-0">
+      {/* RIGHT */}
+      <div className="flex flex-col w-full min-w-0 gap-1">
         <div className="flex justify-between items-center">
-          <Link href={`/user/${post.author?.id}`} className="z-10">
-            <h4 className="font-bold text-[15px] hover:underline cursor-pointer text-white">
-              {post.author?.username}
+          <Link href={`/user/${post.author.id}`}>
+            <h4 className="font-bold text-[15px] text-white hover:underline">
+              {post.author.username}
             </h4>
           </Link>
 
-          {/* Menu chức năng (Edit/Delete) */}
-          {isAuthor && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className="p-2 hover:bg-purple-900/30 rounded-full transition text-purple-400"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreHorizontal size={18} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="bg-zinc-950 border-purple-900/50 text-purple-100"
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="p-2 hover:bg-purple-900/30 rounded-full text-purple-400"
+                onClick={(e) => e.stopPropagation()}
               >
-                <DropdownMenuItem
-                  className="flex gap-2 cursor-pointer focus:bg-purple-900/50"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Edit click"); // Thêm modal edit ở đây
-                  }}
-                >
-                  <Pencil size={14} /> Chỉnh sửa
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="flex gap-2 cursor-pointer text-red-400 focus:bg-red-950/30 focus:text-red-400 font-medium"
-                  onClick={handleDelete}
-                >
-                  <Trash2 size={14} /> Xóa bài
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                <MoreHorizontal size={18} />
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              className="bg-zinc-950 border-purple-900/50 text-purple-100"
+            >
+              {isAuthor ? (
+                <>
+                  <DropdownMenuItem
+                    className="flex gap-2 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditing(true);
+                      setEditContent(post.content);
+                    }}
+                  >
+                    <Pencil size={14} /> Chỉnh sửa
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className="flex gap-2 cursor-pointer text-red-400"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 size={14} /> Xóa bài
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem
+                    className="flex gap-2 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditing(true);
+                      setEditContent(post.content);
+                    }}
+                  >
+                    <Bookmark />
+                    Lưu
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        {/* Nội dung bài viết dẫn link vào chi tiết */}
-        <Link href={`/post/${post.id}`} className="group">
-          <p className="text-[15px] leading-relaxed text-purple-50 whitespace-pre-wrap break-words mt-0.5">
-            {post.content}
-          </p>
-        </Link>
-
-        {/* Các nút tương tác */}
-        <div className="flex gap-6 mt-3 text-purple-300/70 items-center">
+        {/* CONTENT / EDIT */}
+        {isEditing ? (
           <div
-            className="flex items-center gap-1.5 group cursor-pointer"
-            onClick={handleLike}
+            className="mt-2 border border-purple-900/40 rounded-xl p-3 bg-purple-950/30"
+            onClick={(e) => e.stopPropagation()}
           >
+            <textarea
+              autoFocus
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              className="w-full bg-transparent text-sm text-purple-100 resize-none outline-none min-h-[80px]"
+            />
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="text-xs text-purple-400"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleEdit}
+                disabled={!editContent.trim()}
+                className="bg-purple-600 px-4 py-1 rounded-full text-xs font-bold text-white disabled:opacity-40"
+              >
+                Lưu
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Link href={`/post/${post.id}`} className="block">
+            <p className="text-[15px] text-purple-50 whitespace-pre-wrap break-words mt-1">
+              {post.content}
+            </p>
+
+            {post.media && post.media.length > 0 && (
+              <div className="mt-3 w-full max-w-[450px]">
+                {" "}
+                {/* Giới hạn chiều rộng cụm ảnh nhỏ hơn */}
+                <div
+                  className={`grid gap-3 ${
+                    post.media.length === 1 ? "grid-cols-1" : "grid-cols-2"
+                  }`}
+                >
+                  {post.media.map((item) => (
+                    <div
+                      key={item.id}
+                      className="relative overflow-hidden rounded-lg border border-[#333]"
+                    >
+                      <img
+                        src={item.url}
+                        alt="Thread media"
+                        className={`w-full object-cover ${
+                          post.media.length === 1
+                            ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
+                            : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
+                        }`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Link>
+        )}
+
+        {/* ACTIONS */}
+        <div className="flex gap-6 mt-3 text-purple-300/70 items-center">
+          <div className="flex gap-1.5 cursor-pointer" onClick={handleLike}>
             <Heart
               size={19}
-              className={`transition-all duration-300 ${
-                isLike
-                  ? "text-pink-500 fill-pink-500"
-                  : "group-hover:text-pink-500"
-              }`}
+              className={
+                isLike ? "text-pink-500 fill-pink-500" : "hover:text-pink-500"
+              }
             />
-            <NumberFlow value={likesCount} className="text-xs font-medium" />
+            <NumberFlow value={likesCount} className="text-xs" />
           </div>
 
           <div
-            className="flex items-center gap-1.5 group cursor-pointer"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            className="flex gap-1.5 cursor-pointer"
+            onClick={() => {
+              if (!user) {
+                window.location.href = "/login";
+                return;
+              }
               setIsReplying(!isReplying);
             }}
           >
-            <MessageCircle size={19} className="group-hover:text-purple-400" />
-            <NumberFlow value={repliesCount} className="text-xs font-medium" />
+            <MessageCircle size={19} className="hover:text-blue-300" />
+            <NumberFlow value={repliesCount} className="text-xs" />
           </div>
 
-          <Repeat2
-            size={19}
-            className="hover:text-green-500 cursor-pointer transition-colors"
-          />
-          <Send
-            size={19}
-            className="hover:text-blue-400 cursor-pointer transition-colors"
-          />
+          <Repeat2 size={19} />
+          <Send size={19} />
         </div>
 
-        {/* Input trả lời nhanh */}
+        {/* QUICK REPLY */}
         {isReplying && (
-          <div
-            className="mt-4 flex gap-3 animate-in fade-in slide-in-from-top-2 duration-200 border-l-2 border-purple-900/30 pl-4 py-2"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="mt-4 flex gap-3 border-l-2 border-purple-900/30 pl-4">
             <Avatar className="w-7 h-7">
               <AvatarImage
                 src={
@@ -242,25 +331,27 @@ export default function Post({ post }: { post: PostProps }) {
                 }
               />
             </Avatar>
-            <div className="flex flex-col grow gap-2">
+
+            <div className="flex flex-col gap-2 grow">
               <textarea
                 autoFocus
-                placeholder={`Trả lời ${post.author.username}...`}
-                className="w-full bg-transparent border-none text-sm text-purple-100 focus:ring-0 resize-none outline-none p-0 min-h-[40px]"
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
+                placeholder={`Trả lời ${post.author.username}...`}
+                className="bg-transparent text-sm resize-none outline-none min-h-[40px]"
               />
+
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setIsReplying(false)}
-                  className="text-xs text-purple-400 hover:text-purple-200 px-3 py-1"
+                  className="text-xs text-purple-400"
                 >
                   Hủy
                 </button>
                 <button
-                  disabled={!replyContent.trim()}
                   onClick={handleReply}
-                  className="bg-purple-600 hover:bg-purple-500 disabled:opacity-30 text-white px-4 py-1 rounded-full text-xs font-bold transition"
+                  disabled={!replyContent.trim()}
+                  className="bg-purple-600 px-4 py-1 rounded-full text-xs font-bold text-white disabled:opacity-40"
                 >
                   Đăng
                 </button>

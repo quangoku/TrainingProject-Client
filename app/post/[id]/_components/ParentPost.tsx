@@ -98,6 +98,35 @@ export default function MainPost({ post }: { post: Post }) {
           {post.content}
         </p>
 
+        {post.media && post.media.length > 0 && (
+          <div className="mt-3 w-full max-w-[450px]">
+            {" "}
+            {/* Giới hạn chiều rộng cụm ảnh nhỏ hơn */}
+            <div
+              className={`grid gap-3 ${
+                post.media.length === 1 ? "grid-cols-1" : "grid-cols-2"
+              }`}
+            >
+              {post.media.map((item) => (
+                <div
+                  key={item.id}
+                  className="relative overflow-hidden rounded-lg border border-[#333]"
+                >
+                  <img
+                    src={item.url}
+                    alt="Thread media"
+                    className={`w-full object-cover ${
+                      post.media.length === 1
+                        ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
+                        : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
+                    }`}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Nhóm nút tương tác */}
         <div className="flex gap-6 mt-3 text-purple-300 items-center">
           <div className="flex items-center gap-1.5">
@@ -123,7 +152,7 @@ export default function MainPost({ post }: { post: Post }) {
             onClick={() => setIsReplying(!isReplying)}
           >
             <MessageCircle size={20} />
-            <span className="text-sm">{repliesCount}</span>
+            <NumberFlow value={repliesCount} className="text-sm" />
           </div>
 
           <Repeat2
