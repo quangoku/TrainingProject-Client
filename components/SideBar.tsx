@@ -61,30 +61,32 @@ export default function SideBar() {
       </div>
 
       {/* Nút Hamburger & Menu Đăng xuất: Nằm cuối */}
-      <div className="relative md:mb-4">
-        <button
-          onClick={toggleMenu}
-          className="text-purple-400/50 hover:text-purple-50 transition-colors p-2 flex items-center justify-center"
-        >
-          {isOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
+      {user && (
+        <div className="relative md:mb-4">
+          <button
+            onClick={toggleMenu}
+            className="text-purple-400/50 hover:text-purple-50 transition-colors p-2 flex items-center justify-center"
+          >
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
 
-        {/* Pop-up Đăng xuất */}
-        {isOpen && (
-          <div className="absolute bottom-16 right-0 md:bottom-0 md:left-14 bg-[#1a0b2e] border border-purple-900/50 rounded-xl p-1.5 shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in-95 duration-200 min-w-[140px]">
-            <button
-              onClick={handleLogout}
-              className="flex items-center cursor-pointer w-full gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-lg transition-all group"
-            >
-              <LogOut
-                size={20}
-                className="group-hover:translate-x-1 transition-transform"
-              />
-              <span className="font-semibold text-sm ">Đăng xuất</span>
-            </button>
-          </div>
-        )}
-      </div>
+          {/* Pop-up Đăng xuất */}
+          {isOpen && (
+            <div className="absolute bottom-16 right-0 md:bottom-0 md:left-14 bg-[#1a0b2e] border border-purple-900/50 rounded-xl p-1.5 shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in-95 duration-200 min-w-[140px]">
+              <button
+                onClick={handleLogout}
+                className="flex items-center cursor-pointer w-full gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-lg transition-all group"
+              >
+                <LogOut
+                  size={20}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+                <span className="font-semibold text-sm ">Đăng xuất</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 }
