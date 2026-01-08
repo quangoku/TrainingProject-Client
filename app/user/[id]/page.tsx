@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserById } from "@/lib/actions/user";
 import Setting from "./_components/Setting";
 import FollowListModal from "./_components/Follow";
+import { getPostByUserId } from "@/lib/actions/post";
+import Post from "@/components/Post";
 
 type Props = {
   params: { id: string };
@@ -24,6 +26,7 @@ export default async function ProfilePage({
 }) {
   const { id } = await params;
   const user = await getUserById(parseInt(id));
+  const posts = await getPostByUserId(parseInt(id));
   return (
     <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20">
       <main className="w-full max-w-[600px] px-4 pt-8">
@@ -79,40 +82,14 @@ export default async function ProfilePage({
             >
               Threads
             </TabsTrigger>
-            <TabsTrigger
-              value="replies"
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-purple-50 bg-transparent text-purple-400 data-[state=active]:text-purple-50 transition-all"
-            >
-              Trả lời
-            </TabsTrigger>
-            <TabsTrigger
-              value="reposts"
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-purple-50 bg-transparent text-purple-400 data-[state=active]:text-purple-50 transition-all"
-            >
-              Bài đăng lại
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="threads" className="mt-2">
             <div className="flex flex-col">
-              {/* {userPosts.map((post) => (
+              {posts.map((post) => (
                 <Post post={post} key={post.id} />
-              ))} */}
+              ))}
             </div>
-          </TabsContent>
-
-          <TabsContent
-            value="replies"
-            className="py-10 text-center text-purple-400/50"
-          >
-            Chưa có câu trả lời nào.
-          </TabsContent>
-
-          <TabsContent
-            value="reposts"
-            className="py-10 text-center text-purple-400/50"
-          >
-            Chưa có bài đăng lại nào.
           </TabsContent>
         </Tabs>
       </main>

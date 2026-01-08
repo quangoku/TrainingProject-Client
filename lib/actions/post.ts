@@ -14,6 +14,14 @@ export const getPostById = async (id: number) => {
   return result.data;
 };
 
+export const getPostByUserId = async (userId: number) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/posts/users/${userId}`
+  );
+  const result = await response.json();
+  return result.data;
+};
+
 export const getRepliesByPostId = async (id: number) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/replies`
