@@ -1,14 +1,68 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
+import { useSocket } from "@/hooks/useSocket";
 import { Heart, Home, Plus, Search, User, Menu, LogOut, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
+import { toast } from "sonner";
 
 export default function SideBar() {
   const router = useRouter();
   const { user, setUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
+  const socket: Socket = useSocket(user?.id);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNotification = (post) => {
+      toast.custom(
+        (t) => (
+          <div
+            onClick={() => {
+              router.push(`/post/${post.id}`);
+              toast.dismiss(t);
+            }}
+            className=" flex items-center gap-3 bg-[#1a0b2e] border border-purple-900/50 p-4 rounded-xl shadow-2xl w-full"
+          >
+            <img
+              src={post.author.image || "/default-avatar.png"}
+              alt="avatar"
+              className="w-10 h-10 rounded-full object-cover border border-purple-500"
+            />
+            <div className="flex flex-col">
+              <p className="text-sm font-semibold text-purple-50">
+                {post.author.username}
+                <span className="font-normal text-purple-300">
+                  Có bài viết mới
+                </span>
+              </p>
+              <p className="text-xs text-purple-400/80 truncate max-w-[200px]">
+                {post.content.length > 50
+                  ? post.content.slice(0, 50) + "..."
+                  : post.content}
+              </p>
+            </div>
+            <button
+              onClick={() => toast.dismiss(t)}
+              className="ml-auto text-purple-400 hover:text-white"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ),
+        { duration: 10000 }
+      );
+    };
+
+    socket.on("notification", handleNotification);
+
+    return () => {
+      socket.off("notification", handleNotification);
+    };
+  }, [socket]);
 
   const handleLogout = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {

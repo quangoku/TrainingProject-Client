@@ -13,7 +13,6 @@ export default async function PostDetailPage({
   const { id } = await params;
   const post = await getPostById(parseInt(id));
   const replies = await getRepliesByPostId(parseInt(id));
-  console.log(replies);
   if (!post) {
     return <NotFound></NotFound>;
   }
