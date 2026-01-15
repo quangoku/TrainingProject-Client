@@ -5,6 +5,16 @@ export const getPosts = async (cursor: string = "") => {
   const result = await response.json();
   return result.data;
 };
+export const getSavedPosts = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/posts/saved`,
+    {
+      credentials: "include",
+    }
+  );
+  const result = await response.json();
+  return result.data;
+};
 
 export const getPostById = async (id: number) => {
   const response = await fetch(
@@ -41,9 +51,33 @@ export const toggleLike = async (postId: number) => {
   const result = await response.json();
   return result.data;
 };
+
+export const toggleSave = async (postId: number) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/save`,
+    {
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  const result = await response.json();
+  return result.data;
+};
+
 export const getLikeStatus = async (postId: number) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/is-like`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  );
+  const result = await response.json();
+  return result.data;
+};
+export const getSavedStatus = async (postId: number) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/is-saved`,
     {
       method: "GET",
       credentials: "include",

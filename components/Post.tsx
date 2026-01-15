@@ -1,17 +1,20 @@
 "use client";
-
 import {
   Heart,
   MessageCircle,
-  Repeat2,
-  Send,
   MoreHorizontal,
   Pencil,
   Trash2,
   Bookmark,
+  CircleAlert,
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import { getLikeStatus, toggleLike } from "@/lib/actions/post";
+import {
+  getLikeStatus,
+  getSavedStatus,
+  toggleLike,
+  toggleSave,
+} from "@/lib/actions/post";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import NumberFlow from "@number-flow/react";
@@ -42,6 +45,7 @@ export default function Post({ post }: { post: PostProps }) {
   const { user } = useAuth();
 
   const [isLike, setIsLike] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [repliesCount, setRepliesCount] = useState(post.replies_count);
 
@@ -63,6 +67,14 @@ export default function Post({ post }: { post: PostProps }) {
     setIsLike(next);
     setLikesCount((prev) => (next ? prev + 1 : prev - 1));
     await toggleLike(post.id);
+  };
+  const handleSave = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) return (window.location.href = "/login");
+    const next = !isSaved;
+    setIsSaved(next);
+    await toggleSave(post.id);
   };
 
   /* ================= DELETE ================= */
@@ -138,11 +150,13 @@ export default function Post({ post }: { post: PostProps }) {
 
   /* ================= LIKE STATUS ================= */
   useEffect(() => {
-    async function fetchLikeStatus() {
-      const res = await getLikeStatus(post.id);
-      setIsLike(res);
+    async function fetchStatus() {
+      const likeStatus = await getLikeStatus(post.id);
+      const savedStatus = await getSavedStatus(post.id);
+      setIsLike(likeStatus);
+      setIsSaved(savedStatus);
     }
-    fetchLikeStatus();
+    fetchStatus();
   }, [post.id]);
 
   return (
@@ -208,16 +222,9 @@ export default function Post({ post }: { post: PostProps }) {
                 </>
               ) : (
                 <>
-                  <DropdownMenuItem
-                    className="flex gap-2 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsEditing(true);
-                      setEditContent(post.content);
-                    }}
-                  >
-                    <Bookmark />
-                    Lưu
+                  <DropdownMenuItem className="flex gap-2 cursor-pointer text-red-400">
+                    <CircleAlert />
+                    <p>Report</p>
                   </DropdownMenuItem>
                 </>
               )}
@@ -316,8 +323,15 @@ export default function Post({ post }: { post: PostProps }) {
             <NumberFlow value={repliesCount} className="text-xs" />
           </div>
 
-          <Repeat2 size={19} />
-          <Send size={19} />
+          <Bookmark
+            size={19}
+            onClick={handleSave}
+            className={
+              isSaved
+                ? " fill-amber-300 cursor-pointer"
+                : " hover:text-amber-400 cursor-pointer"
+            }
+          />
         </div>
 
         {/* QUICK REPLY */}

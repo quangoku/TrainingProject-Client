@@ -1,7 +1,17 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { useSocket } from "@/hooks/useSocket";
-import { Heart, Home, Plus, Search, User, Menu, LogOut, X } from "lucide-react";
+import {
+  Heart,
+  Home,
+  Plus,
+  Search,
+  User,
+  Menu,
+  LogOut,
+  X,
+  Bookmark,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -100,7 +110,11 @@ export default function SideBar() {
             size={26}
           />
         </div>
-        <Heart
+        <Bookmark
+          onClick={() => {
+            if (user) router.push(`/saved`);
+            else router.push("/login");
+          }}
           className="text-purple-400/50 hover:text-purple-50 cursor-pointer hover:scale-110 transition-transform"
           size={26}
         />
