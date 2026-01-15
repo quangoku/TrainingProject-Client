@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import UserList from "./_components/UserList";
+
+export const metadata: Metadata = {
+  title: "MeThreads - Search",
+  description: "Searching for user",
+};
 
 export default async function SearchPage() {
   const response = await fetch(

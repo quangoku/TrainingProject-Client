@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import SavedPostList from "./_components/SavedPostList";
+
+export const metadata: Metadata = {
+  title: "MeThreads - Saved Posts",
+  description: "Saved Posts",
+};
 
 export default async function ThreadsPage() {
   return (
