@@ -90,7 +90,7 @@ export default function Post({ post }: { post: PostProps }) {
         {
           method: "DELETE",
           credentials: "include",
-        }
+        },
       );
 
       if (res.ok) {
@@ -113,7 +113,7 @@ export default function Post({ post }: { post: PostProps }) {
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: editContent }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -280,15 +280,19 @@ export default function Post({ post }: { post: PostProps }) {
                       key={item.id}
                       className="relative overflow-hidden rounded-lg border border-[#333]"
                     >
-                      <img
-                        src={item.url}
-                        alt="Thread media"
-                        className={`w-full object-cover ${
-                          post.media.length === 1
-                            ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
-                            : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
-                        }`}
-                      />
+                      {item.type === "video" ? (
+                        <video src={item.url} controls autoPlay></video>
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt="Thread media"
+                          className={`w-full object-cover ${
+                            post.media.length === 1
+                              ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
+                              : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
+                          }`}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>

@@ -112,15 +112,19 @@ export default function MainPost({ post }: { post: Post }) {
                   key={item.id}
                   className="relative overflow-hidden rounded-lg border border-[#333]"
                 >
-                  <img
-                    src={item.url}
-                    alt="Thread media"
-                    className={`w-full object-cover ${
-                      post.media.length === 1
-                        ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
-                        : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
-                    }`}
-                  />
+                  {item.type === "video" ? (
+                    <video src={item.url} controls autoPlay></video>
+                  ) : (
+                    <img
+                      src={item.url}
+                      alt="Thread media"
+                      className={`w-full object-cover ${
+                        post.media.length === 1
+                          ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
+                          : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
+                      }`}
+                    />
+                  )}
                 </div>
               ))}
             </div>
