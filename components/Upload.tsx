@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ImagePlus, X } from "lucide-react";
-
 export default function Upload() {
   const { user } = useAuth();
   const [content, setContent] = useState("");
@@ -47,19 +46,42 @@ export default function Upload() {
   };
 
   const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("content", content);
-    selectedImages.forEach((file) => {
-      formData.append("files", file);
-    });
     setUploading(true);
     try {
+      const signatureResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/media/cloudinary/signature`,
+      );
+      const signatureJson = await signatureResponse.json();
+      const sigData = signatureJson.data;
+      const uploadResults = await Promise.all(
+        selectedImages.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("signature", sigData.signature);
+          formData.append("api_key", process.env.NEXT_PUBLIC_CLOUD_API_KEY);
+          formData.append("timestamp", sigData.timestamp);
+          formData.append("folder", sigData.folder);
+
+          const uploadResponse = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/${file.type.split("/")[0]}/upload`,
+            { method: "post", body: formData },
+          );
+          const uploadData = await uploadResponse.json();
+          return uploadData.url;
+        }),
+      );
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
         method: "POST",
         credentials: "include",
-        body: formData,
+        body: JSON.stringify({
+          content: content,
+          media: uploadResults,
+          parent_id: null,
+        }),
       });
-
       if (response.ok) {
         clearAll();
         setOpen(false);
