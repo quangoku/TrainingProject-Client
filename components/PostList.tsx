@@ -24,7 +24,7 @@ interface InitData {
 export default function PostList({ initData }: { initData: InitData }) {
   const [posts, setPosts] = useState<Post[]>(initData.posts);
   const [nextCursor, setNextCursor] = useState<string | null>(
-    initData.nextCursor
+    initData.nextCursor,
   );
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +40,7 @@ export default function PostList({ initData }: { initData: InitData }) {
       setPosts((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
         const newUniquePosts = res.posts.filter(
-          (p: Post) => !existingIds.has(p.id)
+          (p: Post) => !existingIds.has(p.id),
         );
         return [...prev, ...newUniquePosts];
       });
@@ -52,7 +52,7 @@ export default function PostList({ initData }: { initData: InitData }) {
   };
 
   useEffect(() => {
-    if (!loadMoreRef.current || !nextCursor) return;
+    if (!loadMoreRef.current || nextCursor === null) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -60,7 +60,7 @@ export default function PostList({ initData }: { initData: InitData }) {
           fetchPosts(nextCursor);
         }
       },
-      { threshold: 1 }
+      { threshold: 1 },
     );
 
     observer.observe(loadMoreRef.current);
@@ -73,7 +73,7 @@ export default function PostList({ initData }: { initData: InitData }) {
       {posts.map((post) => (
         <Post post={post} key={post.id} />
       ))}
-      {nextCursor && (
+      {nextCursor !== null && (
         <div
           ref={loadMoreRef}
           className="py-4 text-center flex justify-center text-gray-400"
