@@ -24,9 +24,13 @@ export default function Upload() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    console.log(files);
     if (files.length > 0) {
       setSelectedImages((prev) => [...prev, ...files]);
-      const newPreviews = files.map((file) => URL.createObjectURL(file));
+      const newPreviews = files.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: file.type,
+      }));
       setPreviewUrls((prev) => [...prev, ...newPreviews]);
     }
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -144,11 +148,9 @@ export default function Upload() {
                 className="w-full bg-transparent border-none focus:ring-0 text-sm resize-none min-h-[80px] outline-none placeholder:text-purple-400/30"
                 autoFocus
               />
-
-              {/* Preview ảnh dạng Grid */}
               {previewUrls.length > 0 && (
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {previewUrls.map((url, index) => (
+                  {previewUrls.map((item, index) => (
                     <div
                       key={index}
                       className="relative group rounded-lg overflow-hidden border border-purple-900/50 aspect-square bg-black/20"
@@ -159,11 +161,23 @@ export default function Upload() {
                       >
                         <X size={14} />
                       </button>
-                      <img
-                        src={url}
-                        alt="preview"
-                        className="w-full h-full object-cover"
-                      />
+
+                      {item.type.startsWith("video/") ? (
+                        <video
+                          src={item.url}
+                          className="w-full h-full object-cover"
+                          controls={false}
+                          muted
+                          loop
+                          autoPlay
+                        />
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt="preview"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -173,7 +187,7 @@ export default function Upload() {
               <div className="mt-4">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,video/*"
                   multiple
                   className="hidden"
                   ref={fileInputRef}
@@ -185,7 +199,7 @@ export default function Upload() {
                   className="text-purple-400 hover:text-purple-300 transition flex items-center gap-2 w-fit"
                 >
                   <ImagePlus size={20} />
-                  <span className="text-xs font-medium">Thêm ảnh</span>
+                  <span className="text-xs font-medium">Thêm ảnh, video</span>
                 </button>
               </div>
             </div>
@@ -205,10 +219,9 @@ export default function Upload() {
         </DialogContent>
       </Dialog>
 
-      {/* NÚT ĐĂNG (Bên ngoài thanh input) */}
       <Button
         onClick={() => setOpen(true)}
-        className="cursor-pointer ml-auto px-4 py-1.5 bg-purple-600 text-sm font-semibold hover:bg-purple-500 transition cursor-pointer rounded-xl"
+        className=" ml-auto px-4 py-1.5 bg-purple-600 text-sm font-semibold hover:bg-purple-500 transition cursor-pointer rounded-xl"
       >
         Đăng
       </Button>

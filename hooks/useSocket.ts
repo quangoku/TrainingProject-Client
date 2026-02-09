@@ -1,9 +1,8 @@
-// hooks/useSocket.js
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-export const useSocket = (userId) => {
-  const [socket, setSocket] = useState(null);
+export const useSocket = (userId: number) => {
+  const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
     if (!userId) return;
     const socketIo = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
@@ -11,8 +10,7 @@ export const useSocket = (userId) => {
         userId: userId,
       },
     });
-    console.log("socket connected ");
-
+    console.log("socket connected");
     setSocket(socketIo);
     return () => {
       socketIo.disconnect();

@@ -29,7 +29,10 @@ export default function LoginPage() {
         </div>
 
         {/* SOCIAL LOGIN */}
-        <a href="http://localhost:3000/auth/mezon" className="w-full">
+        <a
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/mezon`}
+          className="w-full"
+        >
           <Button
             variant="outline"
             className="w-full h-14 border-purple-900/30 bg-purple-700 cursor-pointer rounded-xl gap-3 "

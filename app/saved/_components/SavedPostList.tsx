@@ -14,9 +14,11 @@ export default function SavedPostList() {
   }, []);
   return (
     <div>
-      {posts.length > 0
-        ? posts.map((post) => <Post post={post} key={post?.id} />)
-        : "no saved posts"}
+      {posts.length > 0 ? (
+        posts.map((post) => <Post post={post} key={post?.id} />)
+      ) : (
+        <p className="text-center text-2xl font-bold">No saved posts</p>
+      )}
     </div>
   );
 }

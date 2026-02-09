@@ -2,7 +2,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useSocket } from "@/hooks/useSocket";
 import {
-  Heart,
   Home,
   Plus,
   Search,
@@ -22,7 +21,7 @@ export default function SideBar() {
   const { user, setUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
-  const socket: Socket = useSocket(user?.id);
+  const socket: Socket | null = useSocket(user?.id);
 
   useEffect(() => {
     if (!socket) return;
@@ -63,7 +62,7 @@ export default function SideBar() {
             </button>
           </div>
         ),
-        { duration: 10000 }
+        { duration: 10000 },
       );
     };
 

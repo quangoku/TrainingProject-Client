@@ -72,7 +72,7 @@ export default function Setting({ profileUser }) {
       {
         method: "POST",
         credentials: "include",
-      }
+      },
     );
     const result = await response.json();
     setIsFollowing(result.data);
@@ -82,7 +82,7 @@ export default function Setting({ profileUser }) {
       if (!user || user.id === profileUser.id) return;
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/follow/${profileUser.id}/is-following`,
-        { credentials: "include" }
+        { credentials: "include" },
       );
       const result = await response.json();
       setIsFollowing(result.data);
@@ -100,7 +100,7 @@ export default function Setting({ profileUser }) {
                 Chỉnh sửa trang cá nhân
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-[#101010] text-white border-gray-800 rounded-2xl">
+            <DialogContent className="sm:max-w-[425px] bg-[#0a0510]/90 text-white border-gray-800 rounded-2xl">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl">
                   Chỉnh sửa trang cá nhân

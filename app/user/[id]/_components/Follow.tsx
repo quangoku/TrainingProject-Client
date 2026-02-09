@@ -38,7 +38,7 @@ export default function FollowListModal({
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/follow/${userId}/${type}`
+        `${process.env.NEXT_PUBLIC_API_URL}/follow/${userId}/${type}`,
       );
       if (res.ok) {
         const result = await res.json();
@@ -83,7 +83,7 @@ export default function FollowListModal({
                 className="flex items-center justify-between gap-3"
               >
                 <Link
-                  href={`/profile/${item.id}`}
+                  href={`/user/${item.id}`}
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-3 flex-1"
                 >

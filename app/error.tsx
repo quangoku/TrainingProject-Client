@@ -34,7 +34,7 @@ export default function Error({
           <Button
             variant="outline"
             onClick={() => (window.location.href = "/")}
-            className="border-purple-900/30 hover:bg-purple-900/10 rounded-xl"
+            className="border-purple-900/30 hover:bg-amber-50 rounded-xl text-black"
           >
             Về trang chủ
           </Button>
