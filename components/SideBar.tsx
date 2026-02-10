@@ -10,6 +10,7 @@ import {
   LogOut,
   X,
   Bookmark,
+  Bell,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -112,6 +113,14 @@ export default function SideBar() {
         <Bookmark
           onClick={() => {
             if (user) router.push(`/saved`);
+            else router.push("/login");
+          }}
+          className="text-purple-400/50 hover:text-purple-50 cursor-pointer hover:scale-110 transition-transform"
+          size={26}
+        />
+        <Bell
+          onClick={() => {
+            if (user) router.push(`/notification`);
             else router.push("/login");
           }}
           className="text-purple-400/50 hover:text-purple-50 cursor-pointer hover:scale-110 transition-transform"

@@ -25,9 +25,10 @@ export default function UserList({ users }) {
         return;
       }
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/search?q=${debouncedSearchName}`
+        `${process.env.NEXT_PUBLIC_API_URL}/users/search?q=${debouncedSearchName}`,
       );
       const result = await response.json();
+      console.log(result);
       setUserList(result.data);
     };
 
