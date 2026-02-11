@@ -1,21 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Post from "./Post";
+import PostComponent from "./Post";
 import { Loader } from "lucide-react";
 import { getPosts } from "@/lib/actions/post";
-interface User {
-  image: string;
-  username: string;
-  id: number;
-}
+import { Post } from "@/types/api/Post";
 
-interface Post {
-  id: number;
-  content: string;
-  author: User;
-  likes_count: number;
-  replies_count: number;
-}
 interface InitData {
   posts: Post[];
   nextCursor: string | null;
@@ -71,7 +60,7 @@ export default function PostList({ initData }: { initData: InitData }) {
   return (
     <div className="flex flex-col">
       {posts.map((post) => (
-        <Post post={post} key={post.id} />
+        <PostComponent post={post} key={post.id} />
       ))}
       {nextCursor !== null && (
         <div

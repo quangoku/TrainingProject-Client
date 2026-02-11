@@ -25,23 +25,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Post } from "@/types/api/Post";
 
-interface User {
-  image: string;
-  username: string;
-  id: number;
-}
-
-interface PostProps {
-  id: number;
-  content: string;
-  author: User;
-  likes_count: number;
-  replies_count: number;
-  media: { id: number; url: string; type: string }[];
-}
-
-export default function Post({ post }: { post: PostProps }) {
+export default function PostComponent({ post }: { post: Post }) {
   const { user } = useAuth();
 
   const [isLike, setIsLike] = useState(false);
@@ -287,7 +273,7 @@ export default function Post({ post }: { post: PostProps }) {
                           src={item.url}
                           alt="Thread media"
                           className={`w-full object-cover ${
-                            post.media.length === 1
+                            post.media?.length === 1
                               ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
                               : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
                           }`}

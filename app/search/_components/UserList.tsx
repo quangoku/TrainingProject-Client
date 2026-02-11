@@ -1,10 +1,11 @@
 "use client";
 import { Search } from "lucide-react";
-import User from "./User";
+import UserComponent from "./User";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import { User } from "@/types/api/user";
 
-export default function UserList({ users }) {
+export default function UserList({ users }: { users: User[] }) {
   const [userList, setUserList] = useState(users);
   const [searchName, setSearchName] = useState("");
   const [debouncedSearchName, setDebouncedSearchName] = useState(searchName);
@@ -54,7 +55,7 @@ export default function UserList({ users }) {
 
       <main className="w-full max-w-[600px] px-4 mt-2 border h-screen rounded-2xl border-purple-900/30 overflow-y-auto">
         {userList.map((user) => (
-          <User user={user} key={user.id}></User>
+          <UserComponent user={user} key={user.id}></UserComponent>
         ))}
       </main>
       <div className="flex flex-col space-y-1"></div>

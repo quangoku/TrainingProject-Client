@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { User } from "@/types/api/user";
 import Link from "next/link";
 
-export default function User({ user }) {
+export default function UserComponent({ user }: { user: User }) {
   return (
     <Link
       href={`/user/${user.id}`}

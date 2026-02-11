@@ -7,20 +7,7 @@ import NumberFlow from "@number-flow/react";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
-
-interface User {
-  image: string;
-  username: string;
-  id: number;
-}
-interface Post {
-  id: number;
-  content: string;
-  author: User;
-  likes_count: number;
-  replies_count: number;
-  time?: string; // Thêm dấu ? vì có thể undefined
-}
+import { Post } from "@/types/api/Post";
 
 export default function MainPost({ post }: { post: Post }) {
   const [isLike, setIsLike] = useState(false);
@@ -119,7 +106,7 @@ export default function MainPost({ post }: { post: Post }) {
                       src={item.url}
                       alt="Thread media"
                       className={`w-full object-cover ${
-                        post.media.length === 1
+                        post.media?.length === 1
                           ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
                           : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
                       }`}

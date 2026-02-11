@@ -1,3 +1,5 @@
+import { Post } from "@/types/api/Post";
+
 export const getPosts = async (cursor: string = "") => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts?cursor=${cursor}`,
@@ -5,7 +7,7 @@ export const getPosts = async (cursor: string = "") => {
   const result = await response.json();
   return result.data;
 };
-export const getSavedPosts = async () => {
+export const getSavedPosts = async (): Promise<Post[]> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/saved`,
     {
@@ -16,7 +18,7 @@ export const getSavedPosts = async () => {
   return result.data;
 };
 
-export const getPostById = async (id: number) => {
+export const getPostById = async (id: number): Promise<Post> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`,
   );
@@ -24,7 +26,7 @@ export const getPostById = async (id: number) => {
   return result.data;
 };
 
-export const getPostByUserId = async (userId: number) => {
+export const getPostByUserId = async (userId: number): Promise<Post[]> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/users/${userId}`,
   );
@@ -32,7 +34,7 @@ export const getPostByUserId = async (userId: number) => {
   return result.data;
 };
 
-export const getRepliesByPostId = async (id: number) => {
+export const getRepliesByPostId = async (id: number): Promise<Post[]> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/replies`,
   );

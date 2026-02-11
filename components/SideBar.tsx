@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { useSocket } from "@/hooks/useSocket";
+import { Post } from "@/types/api/Post";
 import {
   Home,
   Plus,
@@ -27,7 +28,7 @@ export default function SideBar() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNotification = (post) => {
+    const handleNotification = (post: Post) => {
       toast.custom(
         (t) => (
           <div

@@ -14,8 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { User } from "@/types/api/user";
 
-export default function Setting({ profileUser }) {
+export default function Setting({ profileUser }: { profileUser: User }) {
   const { user } = useAuth();
   const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);

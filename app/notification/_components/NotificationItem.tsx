@@ -1,22 +1,27 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getUserById } from "@/lib/actions/user";
-import { constructNow, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { markAsRead } from "@/lib/actions/notification";
+import { Notification } from "@/types/api/Notification";
 interface User {
   username: string;
   image: string;
 }
 
-export default function NotificationItem({ notification }) {
+export default function NotificationItem({
+  notification,
+}: {
+  notification: Notification;
+}) {
   const { _id, content, createdAt, isRead, senderId, postId } = notification;
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
-  const handleNavigateToPost = async (postId: string) => {
+  const handleNavigateToPost = async (postId: number) => {
     console.log(_id);
     await markAsRead(_id);
     router.push(`/post/${postId}`);

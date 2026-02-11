@@ -4,9 +4,10 @@ import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import NotificationItem from "./NotificationItem";
 import { getNotification } from "@/lib/actions/notification";
+import { Notification } from "@/types/api/Notification";
 
 export default function NotificationList() {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[] | null>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,8 +36,8 @@ export default function NotificationList() {
           <div className="text-center py-10 text-purple-400/50">
             Đang tải...
           </div>
-        ) : notifications.length > 0 ? (
-          notifications.map((noti) => (
+        ) : notifications?.length && notifications.length > 0 ? (
+          notifications?.map((noti) => (
             <NotificationItem key={noti._id} notification={noti} />
           ))
         ) : (
