@@ -63,7 +63,7 @@ export default function LoginForm() {
             password: data.password,
           }),
           credentials: "include",
-        }
+        },
       );
 
       const result = await response.json();
@@ -93,7 +93,7 @@ export default function LoginForm() {
         value={data.username}
         onChange={handleChange}
         placeholder="Tên người dùng"
-        className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
+        className="bg-gray border-white h-14 rounded-xl focus:ring-white focus:bg-white"
       />
       <Input
         name="email"
@@ -101,7 +101,7 @@ export default function LoginForm() {
         value={data.email}
         onChange={handleChange}
         placeholder="Email"
-        className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
+        className="bg-gray border-white h-14 rounded-xl focus:ring-white focus:bg-white"
       />
       <Input
         name="password"
@@ -109,7 +109,7 @@ export default function LoginForm() {
         value={data.password}
         onChange={handleChange}
         placeholder="Mật khẩu"
-        className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
+        className="bg-gray border-white h-14 rounded-xl focus:ring-white focus:bg-white"
       />
       <Input
         name="confirmPassword"
@@ -117,7 +117,7 @@ export default function LoginForm() {
         value={data.confirmPassword}
         onChange={handleChange}
         placeholder="Xác nhận mật khẩu"
-        className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
+        className="bg-gray border-white h-14 rounded-xl focus:ring-white focus:bg-white"
       />
 
       {error && (

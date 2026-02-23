@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "MeThreads - Home",
   description: "Home",
   icons: {
-    icon: "/icon.png",
+    icon: "/meblox.png",
   },
 };
 

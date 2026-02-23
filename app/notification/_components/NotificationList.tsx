@@ -27,11 +27,11 @@ export default function NotificationList() {
 
   return (
     <>
-      <header className="w-full max-w-[600px] px-4 pt-6 pb-2 sticky top-0 bg-[#0a0510]/80 backdrop-blur-md z-50">
+      <header className="w-full max-w-[600px] px-4 pt-6 pb-2 sticky top-0 bg-[#111217]/80 backdrop-blur-md z-50">
         <h1 className="text-2xl font-bold mb-4 ml-1">Thông báo</h1>
       </header>
 
-      <main className="w-full max-w-[600px] px-4 mt-2 h-screen rounded-2xl border-x border-purple-900/30 overflow-y-auto">
+      <main className="w-full max-w-[600px] px-4 mt-2 h-screen rounded-2xl border-x border-gray-800/60 overflow-y-auto">
         {loading ? (
           <div className="text-center py-10 text-purple-400/50">
             Đang tải...
@@ -41,7 +41,7 @@ export default function NotificationList() {
             <NotificationItem key={noti._id} notification={noti} />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-purple-400/50">
+          <div className="flex flex-col items-center justify-center py-20 text-gray-800/60">
             <Bell className="w-12 h-12 mb-2 opacity-20" />
             <p>Chưa có thông báo nào</p>
           </div>

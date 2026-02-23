@@ -23,7 +23,6 @@ export default function Upload() {
   >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Dọn dẹp bộ nhớ khi component unmount hoặc khi xóa preview
   useEffect(() => {
     return () => {
       previewUrls.forEach((item) => URL.revokeObjectURL(item.url));
@@ -60,16 +59,13 @@ export default function Upload() {
 
   const handlePost = async () => {
     if (!content.trim() && selectedImages.length === 0) return;
-
     setUploading(true);
     try {
-      // 1. Lấy signature từ Backend
       const signatureResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/media/cloudinary/signature`,
       );
       const { data: sigData } = await signatureResponse.json();
 
-      // 2. Upload song song lên Cloudinary
       const uploadResults = await Promise.all(
         selectedImages.map(async (file) => {
           const formData = new FormData();
@@ -82,18 +78,15 @@ export default function Upload() {
           const resourceType = file.type.startsWith("video/")
             ? "video"
             : "image";
-
           const uploadResponse = await fetch(
             `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/${resourceType}/upload`,
             { method: "POST", body: formData },
           );
-
           const uploadData = await uploadResponse.json();
-          return uploadData.secure_url; // Dùng secure_url cho HTTPS
+          return uploadData.secure_url;
         }),
       );
 
-      // 3. Gửi data về NestJS backend của bạn
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,19 +104,17 @@ export default function Upload() {
       }
     } catch (error) {
       console.error("Lỗi đăng bài:", error);
-      alert("Có lỗi xảy ra khi đăng bài. Vui lòng thử lại!");
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="hidden md:flex items-center gap-3 py-4 border-b border-purple-900/30 w-full">
-      <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0 overflow-hidden">
+    // THANH NHẬP NHANH NGOÀI FEED
+    <div className="hidden md:flex items-center gap-4 py-6 border-b border-gray-800/50 w-full group">
+      <div className="w-10 h-10 rounded-full bg-gray-900 shrink-0 overflow-hidden border border-gray-800 transition-all duration-300 group-hover:border-gray-600">
         <img
-          src={
-            user.image || "https://img.icons8.com/nolan/1200/user-default.jpg"
-          }
+          src={user.image || "/bacon.png"}
           alt="avatar"
           className="w-full h-full object-cover"
         />
@@ -137,54 +128,58 @@ export default function Upload() {
         }}
       >
         <DialogTrigger asChild>
-          <div className="flex-1 cursor-pointer">
-            <p className="text-purple-400/50 text-sm">
+          <div className="flex-1 cursor-text">
+            <p className="text-gray-500 text-[15px] group-hover:text-gray-400 transition-colors tracking-tight">
               Có gì mới, {user.username}?
             </p>
           </div>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-[550px] bg-[#120a1c] border-purple-900/50 text-purple-50 max-h-[90vh] flex flex-col p-0 overflow-hidden outline-none">
-          <DialogHeader className="p-4 border-b border-purple-900/30">
-            <DialogTitle className="text-center text-base font-bold">
-              Tạo đoạn văn bản mới
+        {/* MODAL DIALOG - NỀN #111217 ĐỒNG BỘ LOGIN */}
+        <DialogContent className="sm:max-w-[580px] bg-[#111217] border-gray-800 text-white rounded-[24px] flex flex-col p-0 overflow-hidden outline-none shadow-2xl">
+          <DialogHeader className="p-5 border-b border-gray-800/50 bg-[#111217]">
+            <DialogTitle className="text-center text-base font-bold tracking-tight">
+              Tạo bài viết mới
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-            <div className="flex gap-3">
-              <div className="w-10 h-10 rounded-full bg-purple-800 shrink-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar max-h-[70vh]">
+            <div className="flex gap-4">
+              <div className="w-11 h-11 rounded-full bg-gray-900 shrink-0 overflow-hidden border border-gray-800">
                 <img
-                  src={user.image}
+                  src={user.image ? user.image : "/bacon.png"}
                   alt=""
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold mb-1">{user.username}</p>
+                <p className="text-[15px] font-bold mb-1 tracking-tight">
+                  {user.username}
+                </p>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Có gì mới?"
-                  className="w-full bg-transparent border-none focus:ring-0 text-sm resize-none min-h-[100px] outline-none placeholder:text-purple-400/30"
+                  className="w-full bg-transparent border-none focus:ring-0 text-[16px] leading-relaxed resize-none min-h-[140px] outline-none placeholder:text-gray-600"
                   autoFocus
                 />
 
+                {/* MEDIA PREVIEW GRID */}
                 {previewUrls.length > 0 && (
                   <div
-                    className={`grid gap-2 mt-2 ${previewUrls.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
+                    className={`grid gap-2.5 mt-4 ${previewUrls.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
                   >
                     {previewUrls.map((item, index) => (
                       <div
                         key={index}
-                        className="relative group rounded-xl overflow-hidden border border-purple-900/50 aspect-square bg-black/40"
+                        className="relative group rounded-[20px] overflow-hidden border border-gray-800 bg-black/20 aspect-square"
                       >
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 p-1.5 bg-black/70 rounded-full hover:bg-red-600 transition z-10"
+                          className="absolute top-2.5 right-2.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full hover:bg-red-500 transition-all z-10 md:opacity-0 group-hover:opacity-100"
                         >
-                          <X size={14} />
+                          <X size={14} className="text-white" />
                         </button>
                         {item.type.startsWith("video/") ? (
                           <video
@@ -198,7 +193,7 @@ export default function Upload() {
                           <img
                             src={item.url}
                             alt="preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                         )}
                       </div>
@@ -206,7 +201,7 @@ export default function Upload() {
                   </div>
                 )}
 
-                <div className="mt-4">
+                <div className="mt-6 flex items-center">
                   <input
                     type="file"
                     accept="image/*,video/*"
@@ -219,17 +214,17 @@ export default function Upload() {
                     type="button"
                     disabled={uploading}
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-purple-400/60 hover:text-purple-300 transition-all flex items-center gap-2"
+                    className="text-gray-500 hover:text-white transition-all p-2.5 hover:bg-gray-800/80 rounded-full"
                   >
-                    <ImagePlus size={22} strokeWidth={1.5} />
+                    <ImagePlus size={22} strokeWidth={2} />
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="p-4 flex justify-between items-center bg-[#120a1c]">
-            <p className="text-xs text-purple-400/40">
+          <div className="p-5 flex justify-between items-center bg-[#111217] border-t border-gray-800/50">
+            <p className="text-[13px] text-gray-500 font-medium">
               Bất kỳ ai cũng có thể trả lời
             </p>
             <Button
@@ -237,7 +232,7 @@ export default function Upload() {
               disabled={
                 (!content.trim() && selectedImages.length === 0) || uploading
               }
-              className="bg-white text-black hover:bg-gray-200 rounded-full px-5 font-bold transition-all disabled:opacity-50"
+              className="bg-white text-black hover:bg-gray-200 rounded-full px-8 h-10 font-bold transition-all disabled:opacity-30 shadow-lg active:scale-95"
             >
               {uploading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -251,7 +246,7 @@ export default function Upload() {
 
       <Button
         onClick={() => setOpen(true)}
-        className="ml-auto px-4 py-1 bg-white text-black text-sm font-bold hover:bg-gray-200 transition rounded-full border-none"
+        className="ml-auto px-6 h-9 bg-white text-black text-sm font-bold hover:bg-gray-200 transition-all rounded-full border-none shadow-md active:scale-95"
       >
         Đăng
       </Button>

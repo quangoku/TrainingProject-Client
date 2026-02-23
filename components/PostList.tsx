@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import PostComponent from "./Post";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react"; // Đổi sang Loader2 để có hiệu ứng xoay mượt hơn
 import { getPosts } from "@/lib/actions/post";
 import { Post } from "@/types/api/Post";
 
@@ -36,7 +36,8 @@ export default function PostList({ initData }: { initData: InitData }) {
 
       setNextCursor(res.nextCursor ?? null);
     } finally {
-      setLoading(false);
+      // Thêm một chút delay nhẹ để tránh giật lag UI khi mạng quá nhanh
+      setTimeout(() => setLoading(false), 300);
     }
   };
 
@@ -49,25 +50,49 @@ export default function PostList({ initData }: { initData: InitData }) {
           fetchPosts(nextCursor);
         }
       },
-      { threshold: 1 },
+      { threshold: 0.1 }, // Giảm threshold xuống để trigger sớm hơn một chút, tạo cảm giác mượt
     );
 
     observer.observe(loadMoreRef.current);
 
     return () => observer.disconnect();
-  }, [nextCursor]);
+  }, [nextCursor, loading]); // Thêm loading vào dependency để đảm bảo observer hoạt động chuẩn
 
   return (
-    <div className="flex flex-col">
-      {posts.map((post) => (
-        <PostComponent post={post} key={post.id} />
-      ))}
+    <div className="flex flex-col w-full">
+      {/* Container bài viết: Thêm hiệu ứng fade-in khi có bài mới */}
+      <div className="flex flex-col animate-in fade-in duration-700">
+        {posts.map((post) => (
+          <PostComponent post={post} key={post.id} />
+        ))}
+      </div>
+
+      {/* INFINITE SCROLL AREA */}
       {nextCursor !== null && (
         <div
           ref={loadMoreRef}
-          className="py-4 text-center flex justify-center text-gray-400"
+          className="py-10 text-center flex flex-col items-center justify-center gap-2"
         >
-          {loading ? <Loader size={20} /> : "Load more"}
+          {loading ? (
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="animate-spin text-gray-800/60" size={24} />
+              <span className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">
+                Đang tải thêm
+              </span>
+            </div>
+          ) : (
+            // Một vạch kẻ tinh tế thay vì chữ "Load more" thô cứng
+            <div className="w-1 h-1 rounded-full bg-gray-800" />
+          )}
+        </div>
+      )}
+
+      {/* FOOTER MESSAGE: Khi đã hết bài viết */}
+      {nextCursor === null && posts.length > 0 && (
+        <div className="py-12 text-center">
+          <p className="text-[11px] font-bold text-gray-700 uppercase tracking-[0.3em]">
+            Bạn đã xem hết bài viết
+          </p>
         </div>
       )}
     </div>

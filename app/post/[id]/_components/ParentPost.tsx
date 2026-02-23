@@ -14,7 +14,6 @@ export default function MainPost({ post }: { post: Post }) {
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [repliesCount, setRepliesCount] = useState(post.replies_count);
 
-  // State quản lý việc hiện ô nhập và nội dung comment
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,7 +30,6 @@ export default function MainPost({ post }: { post: Post }) {
 
   const handleReply = async () => {
     if (!replyContent.trim() || isSubmitting) return;
-
     setIsSubmitting(true);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
@@ -57,59 +55,53 @@ export default function MainPost({ post }: { post: Post }) {
   };
 
   return (
-    <article className="py-4 border-b border-purple-900/20 flex gap-3 flex-col">
+    // Thay đổi border tím thành trắng mờ
+    <article className="py-4 border-b border-white/5 flex gap-3 flex-col bg-transparent">
       <div className="flex gap-3 items-center">
         <Link href={`/user/${post.author?.id}`}>
-          <Avatar>
+          <Avatar className="w-9 h-9 border border-white/10">
             <AvatarImage
-              src={
-                post.author?.image ||
-                "https://img.icons8.com/nolan/1200/user-default.jpg"
-              }
-              className="bg-purple-900"
+              src={post.author?.image || "/bacon.png"}
+              className="bg-zinc-800"
             />
-            <AvatarFallback>{post.author?.username[0]}</AvatarFallback>
+            <AvatarFallback className="bg-zinc-800 text-white">
+              {post.author?.username[0]}
+            </AvatarFallback>
           </Avatar>
         </Link>
-        <h4 className="font-bold text-sm hover:underline cursor-pointer text-white">
+        <h4 className="font-bold text-[15px] hover:underline cursor-pointer text-white">
           {post.author?.username}
         </h4>
       </div>
 
       <div className="flex flex-col gap-1 w-full min-w-0">
         <div className="flex gap-5 items-center">
-          <span className="text-purple-400/50 text-xs">{post.time}</span>
+          {/* Thời gian màu xám mờ */}
+          <span className="text-zinc-500 text-xs">{post.time}</span>
         </div>
 
-        <p className="text-[15px] leading-relaxed text-purple-100 wrap-break-word whitespace-pre-wrap">
+        {/* Nội dung text màu zinc-100 để không quá chói */}
+        <p className="text-[15px] leading-relaxed text-zinc-100 wrap-break-word whitespace-pre-wrap mt-1">
           {post.content}
         </p>
 
         {post.media && post.media.length > 0 && (
-          <div className="mt-3 w-full max-w-[450px]">
-            {" "}
-            {/* Giới hạn chiều rộng cụm ảnh nhỏ hơn */}
+          <div className="mt-3 w-full max-w-[480px]">
             <div
-              className={`grid gap-3 ${
-                post.media.length === 1 ? "grid-cols-1" : "grid-cols-2"
-              }`}
+              className={`grid gap-2 ${post.media.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
             >
               {post.media.map((item) => (
                 <div
                   key={item.id}
-                  className="relative overflow-hidden rounded-lg border border-[#333]"
+                  className="relative overflow-hidden rounded-xl border border-white/10"
                 >
                   {item.type === "video" ? (
-                    <video src={item.url} controls autoPlay></video>
+                    <video src={item.url} controls className="w-full" />
                   ) : (
                     <img
                       src={item.url}
                       alt="Thread media"
-                      className={`w-full object-cover ${
-                        post.media?.length === 1
-                          ? "max-h-[350px]" // Ảnh đơn nhỏ hơn
-                          : "h-[160px] md:h-[200px]" // Ảnh grid nhỏ hơn
-                      }`}
+                      className={`w-full object-cover ${post.media?.length === 1 ? "max-h-[400px]" : "h-[200px]"}`}
                     />
                   )}
                 </div>
@@ -118,13 +110,15 @@ export default function MainPost({ post }: { post: Post }) {
           </div>
         )}
 
-        {/* Nhóm nút tương tác */}
-        <div className="flex gap-6 mt-3 text-purple-300 items-center">
-          <div className="flex items-center gap-1.5">
+        {/* Nhóm nút tương tác - Chuyển sang màu Zinc */}
+        <div className="flex gap-6 mt-4 text-zinc-400 items-center">
+          <div className="flex items-center gap-1.5 group">
             <Heart
-              size={20}
-              className={`cursor-pointer transition-all duration-300 ${
-                isLike ? "text-pink-500 fill-pink-500" : "hover:text-pink-500"
+              size={19}
+              className={`cursor-pointer transition-all duration-200 ${
+                isLike
+                  ? "text-[#ff3040] fill-[#ff3040]"
+                  : "group-hover:text-[#ff3040]"
               }`}
               onClick={async (e) => {
                 e.stopPropagation();
@@ -135,58 +129,58 @@ export default function MainPost({ post }: { post: Post }) {
                 await toggleLike(post.id);
               }}
             />
-            <NumberFlow value={likesCount} className="text-sm" />
+            <NumberFlow
+              value={likesCount}
+              className="text-[13px] font-medium"
+            />
           </div>
 
           <div
-            className="flex items-center gap-1.5 cursor-pointer hover:text-purple-400 transition"
+            className="flex items-center gap-1.5 cursor-pointer hover:text-white transition group"
             onClick={() => setIsReplying(!isReplying)}
           >
-            <MessageCircle size={20} />
-            <NumberFlow value={repliesCount} className="text-sm" />
+            <MessageCircle size={19} className="group-hover:text-blue-400" />
+            <NumberFlow
+              value={repliesCount}
+              className="text-[13px] font-medium"
+            />
           </div>
 
           <Repeat2
-            size={20}
-            className="hover:text-green-400 cursor-pointer transition"
+            size={19}
+            className="hover:text-green-500 cursor-pointer transition"
           />
           <Send
-            size={20}
-            className="hover:text-blue-400 cursor-pointer transition"
+            size={19}
+            className="hover:text-white cursor-pointer transition"
           />
         </div>
 
-        {/* Ô NHẬP COMMENT - Hiện ra khi isReplying === true */}
+        {/* Ô NHẬP COMMENT - Style hiện đại theo theme tối */}
         {isReplying && (
-          <div className="mt-4 flex gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
-            <Avatar className="w-8 h-8">
-              <AvatarImage
-                src={
-                  user?.image ||
-                  "https://img.icons8.com/nolan/1200/user-default.jpg"
-                }
-              />
-              <AvatarFallback>U</AvatarFallback>
+          <div className="mt-4 flex gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            <Avatar className="w-8 h-8 border border-white/10">
+              <AvatarImage src={user?.image || "/bacon.png"} />
             </Avatar>
-            <div className="flex flex-col grow gap-2 bg-purple-900/10 p-3 rounded-2xl border border-purple-900/20">
+            <div className="flex flex-col grow gap-2 bg-white/[0.03] p-3 rounded-2xl border border-white/10">
               <textarea
                 autoFocus
                 placeholder={`Trả lời ${post.author?.username}...`}
-                className="w-full bg-transparent border-none text-sm text-purple-100 focus:ring-0 resize-none outline-none p-0 min-h-[60px]"
+                className="w-full bg-transparent border-none text-[14px] text-zinc-100 focus:ring-0 resize-none outline-none p-0 min-h-[60px] placeholder:text-zinc-600"
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
               />
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setIsReplying(false)}
-                  className="text-xs text-purple-400 hover:text-purple-200 px-3 py-1"
+                  className="text-xs font-semibold text-zinc-500 hover:text-zinc-300 px-3 py-1 transition"
                 >
                   Hủy
                 </button>
                 <button
                   disabled={!replyContent.trim() || isSubmitting}
                   onClick={handleReply}
-                  className="bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-4 py-1 rounded-full text-xs font-bold transition shadow-lg"
+                  className="bg-white text-black disabled:opacity-30 px-5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95"
                 >
                   {isSubmitting ? "Đang gửi..." : "Đăng"}
                 </button>
@@ -194,8 +188,6 @@ export default function MainPost({ post }: { post: Post }) {
             </div>
           </div>
         )}
-
-        <div className="border-b border-purple-900/10 mt-6"></div>
       </div>
     </article>
   );

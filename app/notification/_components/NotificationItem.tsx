@@ -45,7 +45,7 @@ export default function NotificationItem({
       className={`cursor-pointer flex items-start gap-3 p-4 border-b border-purple-900/10 transition-colors hover:bg-purple-900/5 ${!isRead ? "bg-purple-900/10" : ""}`}
     >
       <Avatar className="w-10 h-10 border border-purple-900/30">
-        <AvatarImage src={user?.image} />
+        <AvatarImage src={user?.image ? user?.image : "bacon.png"} />
         <AvatarFallback>U</AvatarFallback>
       </Avatar>
 
@@ -53,11 +53,11 @@ export default function NotificationItem({
         <div className="flex justify-between items-start">
           <p className="text-sm text-purple-100">
             <span className="font-bold mr-1">{user?.username}</span>
-            <span className="text-purple-200/80">{content}</span>
+            <span className="text-gray-500">{content}</span>
           </p>
         </div>
 
-        <span className="text-xs text-purple-400/60 mt-1">
+        <span className="text-xs text-gray-400 mt-1">
           {formatDistanceToNow(new Date(createdAt), {
             addSuffix: true,
             locale: vi,

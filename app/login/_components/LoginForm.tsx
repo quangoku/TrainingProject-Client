@@ -20,7 +20,7 @@ export default function LoginForm() {
           },
           body: JSON.stringify(data),
           credentials: "include",
-        }
+        },
       );
 
       if (response.ok) {
@@ -41,7 +41,7 @@ export default function LoginForm() {
         value={data.email}
         onChange={(e) => setData({ ...data, email: e.target.value })}
         placeholder="Tên người dùng, email hoặc số di động"
-        className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
+        className="bg-gray border-white h-14 rounded-xl focus:ring-white focus:bg-white"
       />
       <Input
         name="password"
@@ -49,7 +49,7 @@ export default function LoginForm() {
         onChange={(e) => setData({ ...data, password: e.target.value })}
         type="password"
         placeholder="Mật khẩu"
-        className="bg-purple-900/20 border-purple-900/30 h-14 rounded-xl focus:ring-purple-600 focus:bg-purple-900/40"
+        className="bg-gray border-white h-14 rounded-xl focus:ring-white focus:bg-white"
       />
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

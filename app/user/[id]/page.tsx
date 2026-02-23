@@ -5,6 +5,7 @@ import Setting from "./_components/Setting";
 import FollowListModal from "./_components/Follow";
 import { getPostByUserId } from "@/lib/actions/post";
 import Post from "@/components/Post";
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: { id: string };
