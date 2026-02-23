@@ -8,6 +8,7 @@ import {
   Bookmark,
   CircleAlert,
 } from "lucide-react";
+import { LinkItUrl } from "react-linkify-it";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import {
   getLikeStatus,

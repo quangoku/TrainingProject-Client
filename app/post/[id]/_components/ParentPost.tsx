@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
 import { Post } from "@/types/api/Post";
+import { LinkItUrl } from "react-linkify-it";
 
 export default function MainPost({ post }: { post: Post }) {
   const [isLike, setIsLike] = useState(false);
@@ -81,9 +82,11 @@ export default function MainPost({ post }: { post: Post }) {
         </div>
 
         {/* Nội dung text màu zinc-100 để không quá chói */}
-        <p className="text-[15px] leading-relaxed text-zinc-100 wrap-break-word whitespace-pre-wrap mt-1">
-          {post.content}
-        </p>
+        <LinkItUrl>
+          <p className="text-[15px] leading-relaxed text-zinc-100 wrap-break-word whitespace-pre-wrap mt-1">
+            {post.content}
+          </p>
+        </LinkItUrl>
 
         {post.media && post.media.length > 0 && (
           <div className="mt-3 w-full max-w-[480px]">
