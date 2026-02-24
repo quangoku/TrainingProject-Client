@@ -8,6 +8,8 @@ export interface Post {
   replies_count: number;
   time?: string;
   media?: Media[];
+  likes?: [{ is_like: boolean }];
+  savedPosts?: [{ is_saved: boolean }];
 }
 export interface Media {
   id: number;

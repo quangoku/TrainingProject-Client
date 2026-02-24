@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/api/user";
+import { toast } from "sonner";
 
 export default function Setting({ profileUser }: { profileUser: User }) {
   const { user } = useAuth();
@@ -26,6 +27,7 @@ export default function Setting({ profileUser }: { profileUser: User }) {
   const handleCopyProfileLink = () => {
     const profileLink = `${window.location.origin}/user/${profileUser.id}`;
     navigator.clipboard.writeText(profileLink);
+    toast.success("Copied to clipboard", { duration: 3000 });
   };
 
   const [formData, setFormData] = useState({

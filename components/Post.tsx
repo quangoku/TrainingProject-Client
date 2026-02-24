@@ -8,14 +8,8 @@ import {
   Bookmark,
   CircleAlert,
 } from "lucide-react";
-import { LinkItUrl } from "react-linkify-it";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import {
-  getLikeStatus,
-  getSavedStatus,
-  toggleLike,
-  toggleSave,
-} from "@/lib/actions/post";
+import { toggleLike, toggleSave } from "@/lib/actions/post";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import NumberFlow from "@number-flow/react";
@@ -122,13 +116,11 @@ export default function PostComponent({ post }: { post: Post }) {
 
   useEffect(() => {
     async function fetchStatus() {
-      const likeStatus = await getLikeStatus(post.id);
-      const savedStatus = await getSavedStatus(post.id);
-      setIsLike(likeStatus);
-      setIsSaved(savedStatus);
+      setIsLike(post.likes[0]?.is_like);
+      setIsSaved(post.savedPosts[0]?.is_saved);
     }
     fetchStatus();
-  }, [post.id]);
+  }, []);
 
   return (
     // ARTICLE: Chuyển border-purple thành border-gray-800, hover nhẹ nhàng hơn

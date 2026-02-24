@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import UserList from "./_components/UserList";
 
 export const metadata: Metadata = {
-  title: "MeThreads - Search",
+  title: "Meblox - Search",
   description: "Searching for user",
 };
 export const dynamic = "force-dynamic";

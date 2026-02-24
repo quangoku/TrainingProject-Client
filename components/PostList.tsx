@@ -1,23 +1,19 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import PostComponent from "./Post";
-import { Loader2 } from "lucide-react"; // Đổi sang Loader2 để có hiệu ứng xoay mượt hơn
+import { Loader2 } from "lucide-react";
 import { getPosts } from "@/lib/actions/post";
 import { Post } from "@/types/api/Post";
 
-interface InitData {
-  posts: Post[];
-  nextCursor: string | null;
-}
-
-export default function PostList({ initData }: { initData: InitData }) {
-  const [posts, setPosts] = useState<Post[]>(initData.posts);
-  const [nextCursor, setNextCursor] = useState<string | null>(
-    initData.nextCursor,
-  );
+export default function PostList() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>("");
   const [loading, setLoading] = useState(false);
-
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const fetchPosts = async (cursor?: string | null) => {
     if (loading) return;

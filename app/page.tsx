@@ -1,10 +1,8 @@
 import PostList from "@/components/PostList";
 import Upload from "@/components/Upload";
-import { getPosts } from "@/lib/actions/post";
 import Image from "next/image";
 export const dynamic = "force-dynamic";
 export default async function ThreadsPage() {
-  const data = await getPosts();
   return (
     <div className="min-h-screen bg-[#111217] text-purple-50 flex flex-col items-center pb-20 md:pb-0">
       <header className="w-full max-w-[700px] h-16 flex items-center justify-center sticky top-0 bg-[#111217]/80 backdrop-blur-md z-50">
@@ -21,7 +19,7 @@ export default async function ThreadsPage() {
 
       <main className="w-full max-w-[700px] px-4 border rounded-2xl border-gray-800/60 mt-4 bg-[#111217]/50 backdrop-blur-sm">
         <Upload />
-        <PostList initData={data}></PostList>
+        <PostList></PostList>
       </main>
     </div>
   );

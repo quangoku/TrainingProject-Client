@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import SavedPostList from "./_components/SavedPostList";
 
 export const metadata: Metadata = {
-  title: "MeThreads - Saved Posts",
+  title: "Meblox - Saved Posts",
   description: "Saved Posts",
 };
 

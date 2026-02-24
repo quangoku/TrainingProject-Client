@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import NotificationList from "./_components/NotificationList";
+
+export const metadata: Metadata = {
+  title: "Meblox - Notifications",
+  description: "Notifications",
+};
 
 export default async function NotificationPage() {
   return (

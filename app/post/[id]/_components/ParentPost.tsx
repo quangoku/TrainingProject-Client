@@ -1,7 +1,12 @@
 "use client";
-import { Heart, MessageCircle, Repeat2, Send } from "lucide-react";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getLikeStatus, toggleLike } from "@/lib/actions/post";
+import {
+  getLikeStatus,
+  getSavedStatus,
+  toggleLike,
+  toggleSave,
+} from "@/lib/actions/post";
 import { useEffect, useState } from "react";
 import NumberFlow from "@number-flow/react";
 import Link from "next/link";
@@ -12,6 +17,7 @@ import { LinkItUrl } from "react-linkify-it";
 
 export default function MainPost({ post }: { post: Post }) {
   const [isLike, setIsLike] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [repliesCount, setRepliesCount] = useState(post.replies_count);
 
@@ -24,7 +30,9 @@ export default function MainPost({ post }: { post: Post }) {
   useEffect(() => {
     async function fetchLikeStatus() {
       const res = await getLikeStatus(post.id);
+      const res2 = await getSavedStatus(post.id);
       setIsLike(res);
+      setIsSaved(res2);
     }
     fetchLikeStatus();
   }, [post.id]);
@@ -53,6 +61,23 @@ export default function MainPost({ post }: { post: Post }) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) return (window.location.href = "/login");
+    const newLikeStatus = !isLike;
+    setIsLike(newLikeStatus);
+    setLikesCount((prev) => (newLikeStatus ? prev + 1 : prev - 1));
+    await toggleLike(post.id);
+  };
+
+  const handleSave = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) return (window.location.href = "/login");
+    const next = !isSaved;
+    setIsSaved(next);
+    await toggleSave(post.id);
   };
 
   return (
@@ -123,14 +148,7 @@ export default function MainPost({ post }: { post: Post }) {
                   ? "text-[#ff3040] fill-[#ff3040]"
                   : "group-hover:text-[#ff3040]"
               }`}
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (!user) return (window.location.href = "/login");
-                const newLikeStatus = !isLike;
-                setIsLike(newLikeStatus);
-                setLikesCount((prev) => (newLikeStatus ? prev + 1 : prev - 1));
-                await toggleLike(post.id);
-              }}
+              onClick={handleLike}
             />
             <NumberFlow
               value={likesCount}
@@ -149,14 +167,13 @@ export default function MainPost({ post }: { post: Post }) {
             />
           </div>
 
-          <Repeat2
-            size={19}
-            className="hover:text-green-500 cursor-pointer transition"
-          />
-          <Send
-            size={19}
-            className="hover:text-white cursor-pointer transition"
-          />
+          <button className="flex items-center group/btn" onClick={handleSave}>
+            <div
+              className={`p-2 rounded-full transition-colors group-hover/btn:bg-amber-500/10 ${isSaved ? "text-amber-500" : "group-hover/btn:text-amber-500"}`}
+            >
+              <Bookmark size={19} className={isSaved ? "fill-amber-500" : ""} />
+            </div>
+          </button>
         </div>
 
         {/* Ô NHẬP COMMENT - Style hiện đại theo theme tối */}

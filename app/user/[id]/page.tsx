@@ -3,8 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserById } from "@/lib/actions/user";
 import Setting from "./_components/Setting";
 import FollowListModal from "./_components/Follow";
-import { getPostByUserId } from "@/lib/actions/post";
-import Post from "@/components/Post";
+import UserPosts from "./_components/UserPosts";
 export const dynamic = "force-dynamic";
 
 type Props = {
@@ -27,9 +26,8 @@ export default async function ProfilePage({
 }) {
   const { id } = await params;
   const user = await getUserById(parseInt(id));
-  const posts = await getPostByUserId(parseInt(id));
   return (
-    <div className="min-h-screen bg-[#0a0510] text-purple-50 flex flex-col items-center pb-20">
+    <div className="min-h-screen bg-[#111217] text-purple-50 flex flex-col items-center pb-20">
       <main className="w-full max-w-[600px] px-4 pt-8">
         {/* PROFILE HEADER */}
         <div className="flex justify-between items-start mb-6">
@@ -39,20 +37,16 @@ export default async function ProfilePage({
           </div>
           <div className="relative w-20 h-20">
             <img
-              src={
-                user.image
-                  ? user.image
-                  : "https://img.icons8.com/nolan/1200/user-default.jpg"
-              }
+              src={user.image ? user.image : "/bacon.png"}
               alt="Avatar"
-              className="rounded-full bg-purple-800 object-cover"
+              className="rounded-full  object-cover"
             />
           </div>
         </div>
 
         {/* BIO & LINKS */}
         <div className="mb-6 space-y-3">
-          <p className="text-sm text-purple-100">{user.bio}</p>
+          <p className="text-sm text-gray-400">{user.bio}</p>
           <div className="flex items-center gap-4 text-sm">
             {/* Nút Người theo dõi */}
             <FollowListModal
@@ -76,21 +70,14 @@ export default async function ProfilePage({
         <Setting profileUser={user}></Setting>
         {/* TABS (THREADS, REPLIES, REPOSTS) */}
         <Tabs defaultValue="threads" className="w-full">
-          <TabsList className="w-full bg-transparent  rounded-none p-0 h-12">
-            <TabsTrigger
-              value="threads"
-              className="flex-1  data-[state=active]:bg-purple-800   data-[state=active]:text-white transition-all"
-            >
-              Threads
+          <TabsList className="w-full bg-transparent  rounded-none p-0 h-8">
+            <TabsTrigger value="threads" className="flex-1 transition-all">
+              POSTS
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="threads" className="mt-2">
-            <div className="flex flex-col">
-              {posts.map((post) => (
-                <Post post={post} key={post.id} />
-              ))}
-            </div>
+            <UserPosts userId={parseInt(id)}></UserPosts>
           </TabsContent>
         </Tabs>
       </main>

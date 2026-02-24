@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MeThreads - Home",
+  title: "MeBlox - Home",
   description: "Home",
   icons: {
     icon: "/meblox.png",
